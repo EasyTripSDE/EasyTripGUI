@@ -1,0 +1,27 @@
+<div class="example-full-width">
+  <div class="center" style="width:100%">
+
+    <form class="example-list">
+      <h1 style="padding-left: 40%">Signup form</h1><br>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Username: </mat-label>
+        <textarea matInput  id="username" #username placeholder="Username" required></textarea>
+      </mat-form-field><br>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Email: </mat-label>
+        <textarea matInput  id="email" #email placeholder="Email" required></textarea>
+      </mat-form-field><br>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Inserire la password</mat-label>
+        <input matInput  id="psw" #psw placeholder="Password" [type]="'password'" required>
+      </mat-form-field><br>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Conferma password</mat-label>
+        <input matInput  id="pswConf" #pswConf placeholder="Password" [type]="'password'" required>
+      </mat-form-field><br>
+      <span style="padding-left: 45%"></span>
+      <button mat-raised-button color="primary" (click)="signup(username.value, email.value, psw.value, pswConf.value, $event)">Signup</button>
+      <mat-error style="display: none;" id="loginErrorMessage"></mat-error>
+    </form><br>
+  </div>
+</div>
