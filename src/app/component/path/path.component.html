@@ -1,0 +1,57 @@
+<style>
+
+  agm-map {
+    height: 450px;
+    width: 750px;
+  }
+
+  .map {
+    padding-top: 10px;
+    float: left;
+    margin-left: 1%;
+    width: 49%;
+  }
+
+  .content {
+    padding-left: 1%;
+    padding-right: 1%;
+    padding-top: 10px;
+    height: 460px;
+    float: right;
+    width: 48%;
+  }
+
+  .detail {
+    padding-top: 480px;
+    padding-left: 1%;
+  }
+</style>
+
+<div>    
+  <div class="map">
+    <agm-map [latitude]="latC" [longitude]="lngC" id="mappa">
+      <agm-polyline [visible]="true" [strokeWeight]="3" [strokeColor]="'#990099'">
+        <agm-polyline-point *ngFor="let coordinate of points; let i=index" [latitude]="coordinate[1]" [longitude]="coordinate[0]">
+        </agm-polyline-point>
+      </agm-polyline>
+    </agm-map>
+    <div id="poiSelected"></div>
+  </div>
+
+  <div class="content">
+    <mat-form-field appearance="fill">
+      <select matNativeControl name="toShow" required (change)="updateList($event)">
+        <option value="path">Path</option>
+        <option value="poi">Point of Interests</option>
+        <option value="weather">Weather</option>
+        <option value="bike">Bike Sharing</option>
+      </select>
+    </mat-form-field>
+    <hr>
+    <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
+      <div *cdkVirtualFor="let element of lists" (click)="seeDetail($event)" id="{{element.id}}" class="example-box">{{element.desc}}</div>
+    </cdk-virtual-scroll-viewport>
+  </div> 
+  <div class="detail" id="detailedInfo"> 
+  </div>
+</div>

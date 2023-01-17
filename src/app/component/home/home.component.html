@@ -1,47 +1,70 @@
-<style>
-  agm-map {
-    height: 500px;
-    width: 950px;
-  }
+<div class="example-full-width">
+  <div class="center" style="width:100%">
 
-  .sidebar {
-    float: left;
-    margin-left: 1%;
-    width: 19%;
-    height: 100%;
-  }
-
-  .map {
-    float: left;
-    margin-left: 1%;
-    width: 49%;
-  }
-
-  .content {
-    float: right;
-    margin-left: 1%;
-    width: 29%;
-  }
-</style>
-
-<div>
-  <div class="sidebar">
-    <h4>Filtra elementi</h4>
-    <br>
-  </div>
-  <div class="map">
-    <agm-map [latitude]="latC" [longitude]="lngC" id="mappa">
-      <agm-polyline [visible]="true" [strokeWeight]="3" [strokeColor]="'red'">
-        <agm-polyline-point
-        *ngFor="let coordinate of points; let i=index"
-        [latitude]="coordinate[1]"
-        [longitude]="coordinate[0]">
-
-</agm-polyline-point>
-</agm-polyline>
-
-    </agm-map>
-    <div id="rentalShopSelected"></div>
+    <form class="example-list">
+      <h1 style="padding-left: 40%">Trip choice</h1><br>
+      <span style="padding-left: 33%"></span>
+      <button mat-raised-button color="primary" (click)="dest()">Search destination info</button>
+      <span style="padding-left: 10px"></span>
+      <button mat-raised-button color="primary" (click)="path()">Search path info</button>
+      <mat-error style="display: none;" id="errorMessage"></mat-error>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Destination: </mat-label>
+        <textarea matInput  id="destination" #destination placeholder="Destination" required></textarea>
+      </mat-form-field><br>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Start: </mat-label>
+        <textarea matInput  id="start" #start placeholder="Start"></textarea>
+      </mat-form-field>
+      <mat-accordion>
+        <mat-expansion-panel (opened)="detailed = true" (closed)="detailed = false" class="example-full-width" appearance="fill">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Detailed options
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <br>
+      <mat-label>Interests</mat-label>
+      <span class="example-list-section">
+        <ul>
+          <li *ngFor="let interest of interests">
+            <mat-checkbox>
+              {{interest}}
+            </mat-checkbox>
+          </li>
+        </ul>
+      </span>
+      <br>
+      <br>
+      <mat-checkbox>
+        Show bike sharing
+      </mat-checkbox>
+      <br>
+      <mat-checkbox>
+        Show weather
+      </mat-checkbox>
+      <span style="padding: 10px"></span>
+      <mat-form-field appearance="fill">
+        <select matNativeControl required>
+          <option value="current">Current</option>
+          <option value="forecast">Forecast</option>
+        </select>
+      </mat-form-field>
+      <br>
+      <mat-checkbox>
+        Evita autostrade
+      </mat-checkbox>
+      <br>
+      <mat-label>Mezzo: </mat-label>
+      <br>
+      <mat-form-field appearance="fill">
+        <select matNativeControl required>
+          <option value="car">Car</option>
+          <option value="train">Train</option>
+        </select>
+      </mat-form-field>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </form><br>
   </div>
 </div>
-
