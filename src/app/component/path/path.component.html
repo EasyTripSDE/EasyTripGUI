@@ -31,7 +31,7 @@
   <div class="map">
     <agm-map [latitude]="latC" [longitude]="lngC" id="mappa">
       <agm-polyline [visible]="true" [strokeWeight]="3" [strokeColor]="'#990099'">
-        <agm-polyline-point *ngFor="let coordinate of points; let i=index" [latitude]="coordinate[1]" [longitude]="coordinate[0]">
+        <agm-polyline-point *ngFor="let point of points; let i=index" [latitude]="point.lat" [longitude]="point.lng">
         </agm-polyline-point>
       </agm-polyline>
     </agm-map>
@@ -48,6 +48,10 @@
       </select>
     </mat-form-field>
     <hr>
+    <div *ngIf="listSelected=='path'">
+      {{pathInfo}}
+      <hr>
+    </div>
     <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
       <div *cdkVirtualFor="let element of lists" (click)="seeDetail($event)" id="{{element.id}}" class="example-box">{{element.desc}}</div>
     </cdk-virtual-scroll-viewport>
