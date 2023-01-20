@@ -4,6 +4,7 @@ import { AgmMap, MapsAPILoader } from '@agm/core';
 import { Point } from 'src/app/classes/point';
 import { ClassWithoutInfo } from 'src/app/classes/classWithoutInfo';
 import { ClassWithInfo } from 'src/app/classes/classWithInfo';
+import { conditionallyCreateMapObjectLiteral } from '@angular/compiler/src/render3/view/util';
 
 @Component({
   selector: 'app-path',
@@ -21,41 +22,12 @@ export class PathComponent implements OnInit{
     interests = ["Sustenance", "Education", "Entertainment", "Tourism", "Accomodation"]
     lists: any | undefined;
     listSelected= "path";
-    pathInfo =""
+    pathInfo ="";
+    destInfo = "";
     points : Array<Point> | undefined;
     pathList : Array<ClassWithoutInfo> | undefined;
-    weatherList = [
-        {
-            id: 1,
-            desc: "15/01 Sunny",
-        },
-        {
-            id: 2,
-            desc: "16/01 Snow",
-        },
-        {
-            id: 3,
-            desc: "17/01 Snow"
-        }
-    ]
-
-    poiList = [
-        {
-            id: 1,
-            desc: "1 POI",
-            info: "POINT OF INTERESE 1 CIAO"
-        },
-        {
-            id: 2,
-            desc: "2 POI",
-            info: "POINT POINT OF INTERESE 2 CIAO"
-        },
-        {
-            id: 3,
-            desc: "3 POI",
-            info: "POINT POINT OF INTERESE 3 CIAO"
-        }
-    ]
+    weatherList : Array<ClassWithoutInfo> | undefined;
+    poiList : Array<ClassWithInfo> | undefined;
 
     bikeList = [
         {
@@ -81,7 +53,7 @@ export class PathComponent implements OnInit{
   }
 
   async ngOnInit() {
-      await this.parseRoute();
+      await this.parseInfo();
       this.lists = this.pathList;
   }
 
@@ -114,8 +86,11 @@ export class PathComponent implements OnInit{
   }
 
   getPOI(id: number){
+    // @ts-ignore
     for(let i = 0; i < this.poiList.length; i++){
+        // @ts-ignore
         if(id == this.poiList[i].id){
+            // @ts-ignore
             return this.poiList[i];
         }
     }
@@ -143,9 +118,52 @@ export class PathComponent implements OnInit{
     return {info: ""};
   }
 
-  parseRoute(){
+  parseInfo(){
+    let otherInfo = this.otherData;
+    this.parseCity(otherInfo.city);
+    this.parseWeather(otherInfo.weather);
+    this.parsePoi(otherInfo.poi);
+    this.parseRoute(this.routeO.stops)
+  }
+
+  parseCity(city: any){
+    this.destInfo = city.name + " (" + city.countrycode + ")" + " is a " + city.osm_value + " located in " + city.state + ". Its postcode is " + city.postcode + ". Coordinate: " + city.point.lat + "; " + city.point.lng
+  }
+
+  parseWeather(weather: any){
+    let date = new Date();
+    let size = weather.forecasts.length;
+    this.weatherList = new Array(size + 1);
+    let currentText = date.getDate() + "/" + (date.getMonth() + 1) + " " + weather.current;
+    this.weatherList[0] = new ClassWithoutInfo(0, currentText);
+    let forecast = "";
+
+    for(let i = 0; i < size; i++){
+        date.setDate(date.getDate() + 1);
+        forecast = date.getDate() + "/" + (date.getMonth() + 1) + " " + weather.forecasts[i];
+        this.weatherList[i+1] = new ClassWithoutInfo(i+1, forecast)
+    }
+  }
+
+  parsePoi(poi: any){
+    let size = poi.length;
+    this.poiList = new Array(size);
+    let info = "";
+    let desc = "";
+    console.log("Ciao " + size);
+    for(let i = 0; i < size; i++){
+        info = poi[i].tags.name + ": " + poi[i].tags.amenity;
+        desc = poi[i].tags.name + " is a " + poi[i].tags.amenity + ".";
+        desc += "It is located in " + poi[i].tags["addr:city"] + ", " + poi[i].tags["addr:street"] + ", " + poi[i].tags["addr:housenumber"] + ".";
+        desc += "<br>Contact: " + poi[i].tags["contact:phone"]; 
+        desc += "<br>Coordinates: " + poi[i].lat + "; " + poi[i].lon;
+        this.poiList[i] = new ClassWithInfo(i, info, desc);
+    }
+    console.log("Ciao");
+  }
+
+  parseRoute(routeObj: any){
     let text = "";
-    let routeObj = this.routeO.stops;
     text = "Distance: " + (routeObj.distance)/100 + " km. Time: " + (routeObj.time)/(1000*60) + " minutes"
     this.pathInfo = text;
 
@@ -169,6 +187,68 @@ export class PathComponent implements OnInit{
         this.pathList[i] = new ClassWithoutInfo(i, routeObj.instructions[i].text + " for " + routeObj.instructions[i].distance + " meters (" + routeObj.instructions[i].time/1000 + " seconds)"); 
     }
   }
+
+  otherData = {
+    "success": true,
+    "city": {
+        "point": {
+            "lat": 45.4016855,
+            "lng": 10.2772724
+        },
+        "extent": [
+            10.2203334,
+            45.3262518,
+            10.3212728,
+            45.4628027
+        ],
+        "name": "Ghedi",
+        "country": "Italy",
+        "countrycode": "IT",
+        "state": "Lombardy",
+        "postcode": "25016",
+        "osm_id": 44729,
+        "osm_type": "R",
+        "osm_key": "place",
+        "osm_value": "town"
+    },
+    "weather": {
+        "current": "Pioggia moderata",
+        "forecasts": [
+            "Rovescio leggero",
+            "Nuvoloso",
+            "Parzialmente nuvoloso",
+            "Parzialmente nuvoloso",
+            "Parzialmente nuvoloso",
+            "Nuvoloso",
+            "Nuvoloso",
+            "Parzialmente nuvoloso",
+            "Parzialmente nuvoloso",
+            "Parzialmente nuvoloso",
+            "Nuvoloso",
+            "Cielo sereno",
+            "Cielo sereno",
+            "Cielo sereno",
+            "Cielo sereno",
+            "Cielo sereno"
+        ]
+    },
+    "bike": "No bike sharing data",
+    "poi": [{
+        "type": "node",
+        "id": 1999105208,
+        "lat": 45.3987697,
+        "lon": 10.271112,
+        "tags": {
+            "addr:city": "Ghedi",
+            "addr:housenumber": "20",
+            "addr:street": "Via Circuito Sud",
+            "amenity": "pub",
+            "contact:phone": "+39 030 902401",
+            "name": "Nuova Birreria Saloon"
+        }
+    }]
+}
+
 
   routeO = {
     "stops": {
