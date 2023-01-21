@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { AgmMap, MapsAPILoader } from '@agm/core';
 import { Point } from 'src/app/classes/point';
-import { ClassWithoutInfo } from 'src/app/classes/classWithoutInfo';
+import { Weather } from 'src/app/classes/weather';
 import { POI } from 'src/app/classes/poi';
 import { Bike } from 'src/app/classes/bike';
 import { conditionallyCreateMapObjectLiteral } from '@angular/compiler/src/render3/view/util';
@@ -23,7 +23,7 @@ export class DestComponent implements OnInit{
     listSelected= "poi";
     destInfo = "";
     pointOnMap : Array<Point> | undefined;
-    weatherList : Array<ClassWithoutInfo> | undefined;
+    weatherList : Array<Weather> | undefined;
     poiList : Array<POI> | undefined;
     bikeList : Array<Bike> | undefined;
 
@@ -41,6 +41,7 @@ export class DestComponent implements OnInit{
     // @ts-ignore
     document.getElementById("detailedInfo").innerHTML = "";
     this.listSelected = event.target.value;
+    this.pointOnMap = undefined;
     if(event.target.value == "poi"){
         this.lists = this.poiList;
         this.setPoiPoint();
@@ -147,13 +148,13 @@ export class DestComponent implements OnInit{
     let size = weather.forecasts.length;
     this.weatherList = new Array(size + 1);
     let currentText = date.getDate() + "/" + (date.getMonth() + 1) + " " + weather.current;
-    this.weatherList[0] = new ClassWithoutInfo(0, currentText);
+    this.weatherList[0] = new Weather(0, currentText);
     let forecast = "";
 
     for(let i = 0; i < size; i++){
         date.setDate(date.getDate() + 1);
         forecast = date.getDate() + "/" + (date.getMonth() + 1) + " " + weather.forecasts[i];
-        this.weatherList[i+1] = new ClassWithoutInfo(i+1, forecast)
+        this.weatherList[i+1] = new Weather(i+1, forecast)
     }
   }
 

@@ -3,10 +3,11 @@ import { HttpClient } from "@angular/common/http";
 import { AgmMap, MapsAPILoader } from '@agm/core';
 import { Point } from 'src/app/classes/point';
 import { PathPoint } from 'src/app/classes/pathPoint';
-import { ClassWithoutInfo } from 'src/app/classes/classWithoutInfo';
+import { PathInfo } from 'src/app/classes/pathInfo';
 import { POI } from 'src/app/classes/poi';
 import { Bike } from 'src/app/classes/bike';
-import { conditionallyCreateMapObjectLiteral } from '@angular/compiler/src/render3/view/util';
+import { City } from 'src/app/classes/city';
+import { Weather } from 'src/app/classes/weather';
 
 @Component({
   selector: 'app-path',
@@ -23,13 +24,12 @@ export class PathComponent implements OnInit{
     lists: any | undefined;
     listSelected= "path";
     pathInfo ="";
-    destInfo = "";
+    cityToShow: number = 0;
+    // @ts-ignore
+    city : Array<City>; 
     pointOnMap : Array<Point> | undefined;
     pathPoints : Array<PathPoint> | undefined;
-    pathList : Array<ClassWithoutInfo> | undefined;
-    weatherList : Array<ClassWithoutInfo> | undefined;
-    poiList : Array<POI> | undefined;
-    bikeList : Array<Bike> | undefined;
+    pathList : Array<PathInfo> | undefined;
         
 
   constructor(private http: HttpClient,  private apiloader: MapsAPILoader,) {
@@ -41,20 +41,44 @@ export class PathComponent implements OnInit{
       this.lists = this.pathList;
   }
 
+  updateCity(event: any){
+    this.cityToShow = event.target.value;
+    this.latC = this.city[this.cityToShow].lat;
+    this.lngC = this.city[this.cityToShow].lng;
+    
+    if(this.listSelected == "poi"){
+        this.lists = this.city[this.cityToShow].getPoiList();
+        this.setPoiPoint();
+    }else if(this.listSelected  == "bike"){
+        // @ts-ignore
+        this.lists = this.city[this.cityToShow].bikeList;
+        this.setBikePoint();
+    } else if(this.listSelected == "weather"){
+        // @ts-ignore
+        this.lists = this.city[this.cityToShow].weatherList;
+    }
+    console.log(this.lists);
+  }
+
   updateList(event: any){
     // @ts-ignore
     document.getElementById("detailedInfo").innerHTML = "";
+
     this.listSelected = event.target.value;
+    this.pointOnMap = undefined;
     if(event.target.value == "path"){
         this.lists = this.pathList;
     } else if(event.target.value == "poi"){
-        this.lists = this.poiList;
+        // @ts-ignore
+        this.lists = this.city[this.cityToShow].poiList;
         this.setPoiPoint();
     } else if(event.target.value == "bike"){
-        this.lists = this.bikeList;
+        // @ts-ignore
+        this.lists = this.city[this.cityToShow].bikeList;
         this.setBikePoint();
     } else if(event.target.value == "weather"){
-        this.lists = this.weatherList;
+        // @ts-ignore
+        this.lists = this.city[this.cityToShow].weatherList;
     }
   }
 
@@ -79,32 +103,38 @@ export class PathComponent implements OnInit{
   }
 
   setBikePoint(){
-    let size = this.bikeList?.length;
+    // @ts-ignore
+    let bikeList = (this.city[this.cityToShow]).getBikeList();
+    let size = bikeList?.length;
     this.pointOnMap = new Array(size);
     // @ts-ignore
     for(let i = 0; i < size; i++){
         // @ts-ignore
-        this.pointOnMap[i] = new Point(this.bikeList[i].id, this.bikeList[i].lat, this.bikeList[i].lng);
+        this.pointOnMap[i] = new Point(bikeList[i].id, bikeList[i].lat, bikeList[i].lng);
     }
   }
 
   setPoiPoint(){
-    let size = this.poiList?.length;
+    // @ts-ignore
+    let poiList = (this.city[this.cityToShow]).getPoiList();
+    let size = poiList?.length;
     this.pointOnMap = new Array(size);
     // @ts-ignore
     for(let i = 0; i < size; i++){
         // @ts-ignore
-        this.pointOnMap[i] = new Point(this.poiList[i].id, this.poiList[i].lat, this.poiList[i].lng);
+        this.pointOnMap[i] = new Point(poiList[i].id, poiList[i].lat, poiList[i].lng);
     }
   }
 
   getPOI(id: number){
     // @ts-ignore
-    for(let i = 0; i < this.poiList.length; i++){
+    let poiList = (this.city[this.cityToShow]).getPoiList();
+    // @ts-ignore
+    for(let i = 0; i < poiList.length; i++){
         // @ts-ignore
-        if(id == this.poiList[i].id){
+        if(id == poiList[i].id){
             // @ts-ignore
-            return this.poiList[i];
+            return poiList[i];
         }
     }
     return {info: ""};
@@ -112,23 +142,13 @@ export class PathComponent implements OnInit{
 
   getBike(id: number){
     // @ts-ignore
-    for(let i = 0; i < this.bikeList.length; i++){
-        // @ts-ignore
-        if(id == this.bikeList[i].id){
-            // @ts-ignore
-            return this.bikeList[i];
-        }
-    }
-    return {info: ""};
-  }
-
-  getPoint(id: number){
+    let bikeList = (this.city[this.cityToShow]).getBikeList();
     // @ts-ignore
-    for(let i = 0; i < this.pathList.length; i++){
+    for(let i = 0; i < bikeList.length; i++){
         // @ts-ignore
-        if(id == this.pathList[i].id){
+        if(id == bikeList[i].id){
             // @ts-ignore
-            return this.pathList[i];
+            return bikeList[i];
         }
     }
     return {info: ""};
@@ -136,35 +156,46 @@ export class PathComponent implements OnInit{
 
   parseInfo(){
     let otherInfo = this.otherData;
-    this.parseCity(otherInfo.city);
-    this.parseWeather(otherInfo.weather);
-    this.parseBike(otherInfo.bike);
-    this.parsePoi(otherInfo.poi);
     this.parseRoute(this.routeO.stops)
+    this.latC = otherInfo[0].city.point.lat;
+    this.lngC = otherInfo[0].city.point.lng;
+    let size = otherInfo.length;
+    this.city = new Array(size);
+
+    for(let i = 0; i < size; i++){
+        let name = otherInfo[i].city.name;
+        let desc = this.parseCity(otherInfo[i].city);
+        this.city[i] = new City(name, desc, otherInfo[i].city.point.lat, otherInfo[i].city.point.lng);
+        this.city[i].weatherList = this.parseWeather(otherInfo[i].weather);
+        this.city[i].bikeList = this.parseBike(otherInfo[i].bike);
+        this.city[i].poiList = this.parsePoi(otherInfo[i].poi);
+    }
   }
 
   parseCity(city: any){
-    this.destInfo = city.name + " (" + city.countrycode + ")" + " is a " + city.osm_value + " located in " + city.state + ". Its postcode is " + city.postcode + ". Coordinate: " + city.point.lat + "; " + city.point.lng
+    return city.name + " (" + city.countrycode + ")" + " is a " + city.osm_value + " located in " + city.state + ". Its postcode is " + city.postcode + ". Coordinate: " + city.point.lat + "; " + city.point.lng
   }
 
   parseWeather(weather: any){
     let date = new Date();
     let size = weather.forecasts.length;
-    this.weatherList = new Array(size + 1);
+    let weatherList = new Array(size + 1);
     let currentText = date.getDate() + "/" + (date.getMonth() + 1) + " " + weather.current;
-    this.weatherList[0] = new ClassWithoutInfo(0, currentText);
+    weatherList[0] = new Weather(0, currentText);
     let forecast = "";
 
     for(let i = 0; i < size; i++){
         date.setDate(date.getDate() + 1);
         forecast = date.getDate() + "/" + (date.getMonth() + 1) + " " + weather.forecasts[i];
-        this.weatherList[i+1] = new ClassWithoutInfo(i+1, forecast)
+        weatherList[i+1] = new Weather(i+1, forecast)
     }
+
+    return weatherList;
   }
 
   parseBike(bike:any){
     let size = bike.length;
-    this.bikeList = new Array(size);
+    let bikeList = new Array(size);
     let info = "";
     let desc = "";
 
@@ -173,25 +204,26 @@ export class PathComponent implements OnInit{
         desc = bike[i].name + " of " + bike[i].company + ".";
         desc += "<br>" + "Located in: " + bike[i].location.city + " (" + bike[i].location.country +")";
         desc += "<br>" + "Coordinate: " + bike[i].location.latitude + "; " + bike[i].location.longitude;
-        this.bikeList[i] = new Bike(i, info, desc, bike[i].location.latitude, bike[i].location.longitude);
+        bikeList[i] = new Bike(i, info, desc, bike[i].location.latitude, bike[i].location.longitude);
     }
+    return bikeList;
   }
 
   parsePoi(poi: any){
     let size = poi.length;
-    this.poiList = new Array(size);
+    let poiList = new Array(size);
     let info = "";
     let desc = "";
-    console.log("Ciao " + size);
     for(let i = 0; i < size; i++){
         info = poi[i].tags.name + ": " + poi[i].tags.amenity;
         desc = poi[i].tags.name + " is a " + poi[i].tags.amenity + ".";
         desc += "It is located in " + poi[i].tags["addr:city"] + ", " + poi[i].tags["addr:street"] + ", " + poi[i].tags["addr:housenumber"] + ".";
         desc += "<br>Contact: " + poi[i].tags["contact:phone"]; 
         desc += "<br>Coordinates: " + poi[i].lat + "; " + poi[i].lon;
-        this.poiList[i] = new POI(i, info, desc, poi[i].lat, poi[i].lon);
+        poiList[i] = new POI(i, info, desc, poi[i].lat, poi[i].lon);
     }
-    console.log("Ciao");
+
+    return poiList;
   }
 
   parseRoute(routeObj: any){
@@ -203,9 +235,6 @@ export class PathComponent implements OnInit{
     let minLat = routeObj.bbox[1];
     let maxLng = routeObj.bbox[2];
     let maxLat = routeObj.bbox[3];
-    
-    this.latC = minLat + (maxLat-minLat)/2; //HA SENSO? focus on destination
-    this.lngC = minLng + (maxLng-minLng)/2; //HA SENSO? focus on destination
 
     let size = routeObj.points.coordinates.length;
     this.pathPoints = new Array(size) 
@@ -216,12 +245,11 @@ export class PathComponent implements OnInit{
     let sizeInstructions = routeObj.instructions.length;
     this.pathList = new Array(sizeInstructions) 
     for(let i = 0; i < sizeInstructions; i++){
-        this.pathList[i] = new ClassWithoutInfo(i, routeObj.instructions[i].text + " for " + routeObj.instructions[i].distance + " meters (" + routeObj.instructions[i].time/1000 + " seconds)"); 
+        this.pathList[i] = new PathInfo(i, routeObj.instructions[i].text + " for " + routeObj.instructions[i].distance + " meters (" + routeObj.instructions[i].time/1000 + " seconds)"); 
     }
   }
 
-  otherData = {
-    "success": true,
+  otherData = [{
     "city": {
         "point": {
             "lat": 45.4016855,
@@ -317,7 +345,73 @@ export class PathComponent implements OnInit{
             "name": "Nuova Birreria Saloon"
         }
     }]
+},
+{
+    "city": {
+        "point": {
+            "lat": 44.4016855,
+            "lng": 12.2772724
+        },
+        "extent": [
+            12.2203334,
+            44.3262518,
+            12.3212728,
+            44.4628027
+        ],
+        "name": "Roma",
+        "country": "Italy",
+        "countrycode": "IT",
+        "state": "Lombardy",
+        "postcode": "25016",
+        "osm_id": 44729,
+        "osm_type": "R",
+        "osm_key": "place",
+        "osm_value": "town"
+    },
+    "weather": {
+        "current": "Pioggia moderata",
+        "forecasts": [
+            "Neve",
+            "Neve",
+            "Neve",
+            "Neve",
+            "Neve",
+            "Neve",
+            "Rovescio leggero",
+            "Nuvoloso",
+            "Parzialmente nuvoloso",
+            "Parzialmente nuvoloso",
+            "Parzialmente nuvoloso",
+            "Nuvoloso",
+            "Nuvoloso",
+            "Parzialmente nuvoloso",
+            "Parzialmente nuvoloso",
+            "Parzialmente nuvoloso",
+            "Nuvoloso",
+            "Cielo sereno",
+            "Cielo sereno",
+            "Cielo sereno",
+            "Cielo sereno",
+            "Cielo sereno"
+        ]
+    },
+    "bike": [ ],
+    "poi": [{
+        "type": "node",
+        "id": 1999105208,
+        "lat": 45.3987697,
+        "lon": 10.271112,
+        "tags": {
+            "addr:city": "Roma",
+            "addr:housenumber": "20",
+            "addr:street": "Via Circuito Sud",
+            "amenity": "pub",
+            "contact:phone": "+39 030 902401",
+            "name": "CIAO"
+        }
+    }]
 }
+]
 
 
   routeO = {

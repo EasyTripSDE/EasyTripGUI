@@ -29,7 +29,7 @@
 
 <div>    
   <div style="padding-left:1%; padding-top:10px;">
-    <b> {{destInfo}} </b>
+    <b> {{city[cityToShow].desc}} </b>
   </div>
   <div class="map">
     <agm-map [latitude]="latC" [longitude]="lngC" id="mappa">
@@ -44,6 +44,12 @@
   </div>
 
   <div class="content">
+    <mat-form-field appearance="fill">
+      <select matNativeControl name="city" required (change)="updateCity($event)">
+        <option *ngFor="let c of city; let i=index;" value="{{i}}">{{c.name}}</option>
+      </select>
+    </mat-form-field>
+    <span style="padding-left:2%"></span>
     <mat-form-field appearance="fill">
       <select matNativeControl name="toShow" required (change)="updateList($event)">
         <option value="path">Path</option>

@@ -1,5 +1,5 @@
 
-export class ClassWithoutInfo{
+export class PathInfo{
     // @ts-ignore
     id: number;
     desc: string;
