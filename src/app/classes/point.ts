@@ -1,9 +1,10 @@
 export class Point{
-    // @ts-ignore
     lat: number;
     lng: number;
+    id: number
 
-    constructor (lat: number, lng: number){
+    constructor (id: number, lat: number, lng: number){
+        this.id = id;
         this.lat = lat;
         this.lng = lng;
     }

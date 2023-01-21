@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './component/header/header.component';
 import { FooterComponent } from "./component/footer/footer.component";
+import { DestComponent } from './component/dest/dest.component';
 import { PathComponent } from './component/path/path.component';
 import { HomeComponent } from "./component/home/home.component";
 import { SignUpComponent } from "./component/signup/signup.component";
@@ -30,7 +31,7 @@ import { AgmCoreModule } from '@agm/core';
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent, HomeComponent, FooterComponent, SignUpComponent, PathComponent
+    HeaderComponent, HomeComponent, FooterComponent, SignUpComponent, PathComponent, DestComponent
   ],
   imports: [
     BrowserModule,

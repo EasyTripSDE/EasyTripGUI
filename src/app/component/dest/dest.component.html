@@ -35,10 +35,6 @@
     <agm-map [latitude]="latC" [longitude]="lngC" id="mappa">
       <agm-marker id="{{element.id}}" [latitude]="element.lat" [longitude]="element.lng" *ngFor="let element of pointOnMap"
       (markerClick)="showMarkerInfo($event)"></agm-marker>
-      <agm-polyline [visible]="true" [strokeWeight]="3" [strokeColor]="'#990099'">
-        <agm-polyline-point *ngFor="let pathPoint of pathPoints; let i=index" [latitude]="pathPoint.lat" [longitude]="pathPoint.lng">
-        </agm-polyline-point>
-      </agm-polyline>
     </agm-map>
     <div id="poiSelected"></div>
   </div>
@@ -46,17 +42,12 @@
   <div class="content">
     <mat-form-field appearance="fill">
       <select matNativeControl name="toShow" required (change)="updateList($event)">
-        <option value="path">Path</option>
         <option value="poi">Point of Interests</option>
         <option value="weather">Weather</option>
         <option value="bike">Bike Sharing</option>
       </select>
     </mat-form-field>
     <hr>
-    <div *ngIf="listSelected=='path'">
-      {{pathInfo}}
-      <hr>
-    </div>
     <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
       <div *cdkVirtualFor="let element of lists" (click)="seeDetail($event)" id="{{element.id}}" class="example-box">{{element.desc}}</div>
     </cdk-virtual-scroll-viewport>

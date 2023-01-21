@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { AgmMap, MapsAPILoader } from '@agm/core';
 import { Point } from 'src/app/classes/point';
+import { PathPoint } from 'src/app/classes/pathPoint';
 import { ClassWithoutInfo } from 'src/app/classes/classWithoutInfo';
 import { POI } from 'src/app/classes/poi';
 import { Bike } from 'src/app/classes/bike';
@@ -15,8 +16,6 @@ import { conditionallyCreateMapObjectLiteral } from '@angular/compiler/src/rende
 
 
 export class PathComponent implements OnInit{
-    // @ts-ignore
-    members: Member[];
     latC = 0;
     lngC = 0;
     detailId: number | undefined;
@@ -25,7 +24,8 @@ export class PathComponent implements OnInit{
     listSelected= "path";
     pathInfo ="";
     destInfo = "";
-    points : Array<Point> | undefined;
+    pointOnMap : Array<Point> | undefined;
+    pathPoints : Array<PathPoint> | undefined;
     pathList : Array<ClassWithoutInfo> | undefined;
     weatherList : Array<ClassWithoutInfo> | undefined;
     poiList : Array<POI> | undefined;
@@ -49,15 +49,24 @@ export class PathComponent implements OnInit{
         this.lists = this.pathList;
     } else if(event.target.value == "poi"){
         this.lists = this.poiList;
+        this.setPoiPoint();
     } else if(event.target.value == "bike"){
         this.lists = this.bikeList;
+        this.setBikePoint();
     } else if(event.target.value == "weather"){
         this.lists = this.weatherList;
     }
   }
 
   seeDetail(event:any){
-    let id = event.target.id;
+    this.setDetailInfo(event.target.id);
+  }
+
+  showMarkerInfo(event: any){
+    this.setDetailInfo(event._id);
+  }
+
+  setDetailInfo(id: number){
     let text = "";
     if(this.listSelected == "poi"){
         text = (this.getPOI(id))?.info;
@@ -67,6 +76,26 @@ export class PathComponent implements OnInit{
 
     // @ts-ignore
     document.getElementById("detailedInfo").innerHTML = text;
+  }
+
+  setBikePoint(){
+    let size = this.bikeList?.length;
+    this.pointOnMap = new Array(size);
+    // @ts-ignore
+    for(let i = 0; i < size; i++){
+        // @ts-ignore
+        this.pointOnMap[i] = new Point(this.bikeList[i].id, this.bikeList[i].lat, this.bikeList[i].lng);
+    }
+  }
+
+  setPoiPoint(){
+    let size = this.poiList?.length;
+    this.pointOnMap = new Array(size);
+    // @ts-ignore
+    for(let i = 0; i < size; i++){
+        // @ts-ignore
+        this.pointOnMap[i] = new Point(this.poiList[i].id, this.poiList[i].lat, this.poiList[i].lng);
+    }
   }
 
   getPOI(id: number){
@@ -144,7 +173,7 @@ export class PathComponent implements OnInit{
         desc = bike[i].name + " of " + bike[i].company + ".";
         desc += "<br>" + "Located in: " + bike[i].location.city + " (" + bike[i].location.country +")";
         desc += "<br>" + "Coordinate: " + bike[i].location.latitude + "; " + bike[i].location.longitude;
-        this.bikeList[i] = new Bike(i, info, desc);
+        this.bikeList[i] = new Bike(i, info, desc, bike[i].location.latitude, bike[i].location.longitude);
     }
   }
 
@@ -160,7 +189,7 @@ export class PathComponent implements OnInit{
         desc += "It is located in " + poi[i].tags["addr:city"] + ", " + poi[i].tags["addr:street"] + ", " + poi[i].tags["addr:housenumber"] + ".";
         desc += "<br>Contact: " + poi[i].tags["contact:phone"]; 
         desc += "<br>Coordinates: " + poi[i].lat + "; " + poi[i].lon;
-        this.poiList[i] = new POI(i, info, desc);
+        this.poiList[i] = new POI(i, info, desc, poi[i].lat, poi[i].lon);
     }
     console.log("Ciao");
   }
@@ -179,9 +208,9 @@ export class PathComponent implements OnInit{
     this.lngC = minLng + (maxLng-minLng)/2; //HA SENSO? focus on destination
 
     let size = routeObj.points.coordinates.length;
-    this.points = new Array(size) 
+    this.pathPoints = new Array(size) 
     for(let i = 0; i < size; i++){
-        this.points[i] = new Point(routeObj.points.coordinates[i][1], routeObj.points.coordinates[i][0])
+        this.pathPoints[i] = new PathPoint(routeObj.points.coordinates[i][1], routeObj.points.coordinates[i][0])
     }
     
     let sizeInstructions = routeObj.instructions.length;
@@ -240,12 +269,37 @@ export class PathComponent implements OnInit{
             "company": "JCDecaux", 
             "href": "/v2/networks/velib",
             "location": {
-              "latitude": 48.856612, 
+              "latitude": 46.1279, 
               "city": "Paris", 
-              "longitude": 2.352233, 
+              "longitude": 11.2452, 
               "country": "FRA"
             }, 
             "name": "Vélib'", 
+            "id": "velib"
+        },
+
+        {
+            "company": "JCDecaux", 
+            "href": "/v2/networks/velib",
+            "location": {
+              "latitude": 45.1279, 
+              "city": "Paris", 
+              "longitude": 10.2452, 
+              "country": "FRA"
+            }, 
+            "name": "BBBB'", 
+            "id": "velib"
+        },
+        {
+            "company": "JCDecaux", 
+            "href": "/v2/networks/velib",
+            "location": {
+              "latitude": 44.1279, 
+              "city": "Paris", 
+              "longitude": 11.2452, 
+              "country": "FRA"
+            }, 
+            "name": "AAAAA'", 
             "id": "velib"
         }
     ],
