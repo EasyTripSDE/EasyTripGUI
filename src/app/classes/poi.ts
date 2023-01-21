@@ -1,5 +1,5 @@
 
-export class ClassWithInfo{
+export class POI{
     // @ts-ignore
     id: number;
     desc: string;

@@ -3,7 +3,8 @@ import { HttpClient } from "@angular/common/http";
 import { AgmMap, MapsAPILoader } from '@agm/core';
 import { Point } from 'src/app/classes/point';
 import { ClassWithoutInfo } from 'src/app/classes/classWithoutInfo';
-import { ClassWithInfo } from 'src/app/classes/classWithInfo';
+import { POI } from 'src/app/classes/poi';
+import { Bike } from 'src/app/classes/bike';
 import { conditionallyCreateMapObjectLiteral } from '@angular/compiler/src/render3/view/util';
 
 @Component({
@@ -27,25 +28,8 @@ export class PathComponent implements OnInit{
     points : Array<Point> | undefined;
     pathList : Array<ClassWithoutInfo> | undefined;
     weatherList : Array<ClassWithoutInfo> | undefined;
-    poiList : Array<ClassWithInfo> | undefined;
-
-    bikeList = [
-        {
-            id: 1,
-            desc: "1 BIKE",
-            info: "BIKE 1 CIAO"
-        },
-        {
-            id: 2,
-            desc: "2 BIKE",
-            info: "BIKE 2 CIAO"
-        },
-        {
-            id: 3,
-            desc: "3 BIKE",
-            info: "BIKE 3 CIAO"
-        }
-    ]
+    poiList : Array<POI> | undefined;
+    bikeList : Array<Bike> | undefined;
         
 
   constructor(private http: HttpClient,  private apiloader: MapsAPILoader,) {
@@ -98,8 +82,11 @@ export class PathComponent implements OnInit{
   }
 
   getBike(id: number){
+    // @ts-ignore
     for(let i = 0; i < this.bikeList.length; i++){
+        // @ts-ignore
         if(id == this.bikeList[i].id){
+            // @ts-ignore
             return this.bikeList[i];
         }
     }
@@ -122,6 +109,7 @@ export class PathComponent implements OnInit{
     let otherInfo = this.otherData;
     this.parseCity(otherInfo.city);
     this.parseWeather(otherInfo.weather);
+    this.parseBike(otherInfo.bike);
     this.parsePoi(otherInfo.poi);
     this.parseRoute(this.routeO.stops)
   }
@@ -145,6 +133,21 @@ export class PathComponent implements OnInit{
     }
   }
 
+  parseBike(bike:any){
+    let size = bike.length;
+    this.bikeList = new Array(size);
+    let info = "";
+    let desc = "";
+
+    for(let i = 0; i < size; i++){
+        info = bike[i].name + " of " + bike[i].company;
+        desc = bike[i].name + " of " + bike[i].company + ".";
+        desc += "<br>" + "Located in: " + bike[i].location.city + " (" + bike[i].location.country +")";
+        desc += "<br>" + "Coordinate: " + bike[i].location.latitude + "; " + bike[i].location.longitude;
+        this.bikeList[i] = new Bike(i, info, desc);
+    }
+  }
+
   parsePoi(poi: any){
     let size = poi.length;
     this.poiList = new Array(size);
@@ -157,7 +160,7 @@ export class PathComponent implements OnInit{
         desc += "It is located in " + poi[i].tags["addr:city"] + ", " + poi[i].tags["addr:street"] + ", " + poi[i].tags["addr:housenumber"] + ".";
         desc += "<br>Contact: " + poi[i].tags["contact:phone"]; 
         desc += "<br>Coordinates: " + poi[i].lat + "; " + poi[i].lon;
-        this.poiList[i] = new ClassWithInfo(i, info, desc);
+        this.poiList[i] = new POI(i, info, desc);
     }
     console.log("Ciao");
   }
@@ -232,7 +235,20 @@ export class PathComponent implements OnInit{
             "Cielo sereno"
         ]
     },
-    "bike": "No bike sharing data",
+    "bike": [
+        {
+            "company": "JCDecaux", 
+            "href": "/v2/networks/velib",
+            "location": {
+              "latitude": 48.856612, 
+              "city": "Paris", 
+              "longitude": 2.352233, 
+              "country": "FRA"
+            }, 
+            "name": "Vélib'", 
+            "id": "velib"
+        }
+    ],
     "poi": [{
         "type": "node",
         "id": 1999105208,
