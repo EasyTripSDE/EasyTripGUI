@@ -4,7 +4,7 @@
     <form class="example-list">
       <h1 style="padding-left: 40%">Trip choice</h1><br>
       <span style="padding-left: 33%"></span>
-      <button mat-raised-button color="primary" (click)="dest()">Search destination info</button>
+      <button mat-raised-button color="primary" (click)="dest($event, $any(destination.value), $any(weather.checked), $any(bike.checked))">Search destination info</button>
       <span style="padding-left: 10px"></span>
       <button mat-raised-button color="primary" (click)="path()">Search path info</button>
       <mat-error style="display: none;" id="errorMessage"></mat-error>
@@ -12,10 +12,6 @@
         <mat-label>Destination: </mat-label>
         <textarea matInput  id="destination" #destination placeholder="Destination" required></textarea>
       </mat-form-field><br>
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Start: </mat-label>
-        <textarea matInput  id="start" #start placeholder="Start"></textarea>
-      </mat-form-field>
       <mat-accordion>
         <mat-expansion-panel (opened)="detailed = true" (closed)="detailed = false" class="example-full-width" appearance="fill">
           <mat-expansion-panel-header>
@@ -27,42 +23,21 @@
       <mat-label>Interests</mat-label>
       <span class="example-list-section">
         <ul>
-          <li *ngFor="let interest of interests">
-            <mat-checkbox>
-              {{interest}}
-            </mat-checkbox>
+          <li *ngFor="let int of interests">
+            <input type="checkbox" [value]="int.value" [checked]="int.selected" (change)="changeValue($event)">
+              {{int.name}}
           </li>
         </ul>
       </span>
       <br>
       <br>
-      <mat-checkbox>
+      <mat-checkbox id="bike" #bike>
         Show bike sharing
       </mat-checkbox>
       <br>
-      <mat-checkbox>
+      <mat-checkbox id="weather" #weather [checked]="true">
         Show weather
       </mat-checkbox>
-      <span style="padding: 10px"></span>
-      <mat-form-field appearance="fill">
-        <select matNativeControl required>
-          <option value="current">Current</option>
-          <option value="forecast">Forecast</option>
-        </select>
-      </mat-form-field>
-      <br>
-      <mat-checkbox>
-        Evita autostrade
-      </mat-checkbox>
-      <br>
-      <mat-label>Mezzo: </mat-label>
-      <br>
-      <mat-form-field appearance="fill">
-        <select matNativeControl required>
-          <option value="car">Car</option>
-          <option value="train">Train</option>
-        </select>
-      </mat-form-field>
         </mat-expansion-panel>
       </mat-accordion>
     </form><br>
