@@ -32,7 +32,7 @@
     <b> {{city.desc}} </b>
   </div>
   <div class="map">
-    <agm-map [latitude]="latC" [longitude]="lngC" id="mappa">
+    <agm-map [zoom]="11" [latitude]="latC" [longitude]="lngC" id="mappa">
       <agm-marker id="{{element.id}}" [latitude]="element.lat" [longitude]="element.lng" *ngFor="let element of pointOnMap"
       (markerClick)="showMarkerInfo($event)"></agm-marker>
     </agm-map>
@@ -42,9 +42,7 @@
   <div class="content">
     <mat-form-field appearance="fill">
       <select matNativeControl name="toShow" required (change)="updateList($event)">
-        <option value="poi">Point of Interests</option>
-        <option value="weather">Weather</option>
-        <option value="bike">Bike Sharing</option>
+        <option *ngFor="let opt of city.options" value="{{opt.name}}">{{opt.value}}</option>
       </select>
     </mat-form-field>
     <hr>

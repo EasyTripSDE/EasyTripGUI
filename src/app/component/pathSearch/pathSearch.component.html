@@ -1,0 +1,72 @@
+<div class="example-full-width">
+    <div class="center" style="width:100%">
+  
+      <form class="example-list">
+        <h1 style="padding-left: 40%">Trip choice</h1><br>
+        <span style="padding-left: 37%"></span>
+        <button mat-raised-button color="primary" (click)="path($event, $any(start.value), $any(destination.value), $any(weather.checked), $any(bike.checked), $any(limit.value), $any(minDistance.value), $any(maxDetour.value), $any(profile.value))">Search path info</button>
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Start: </mat-label>
+            <textarea matInput  id="start" #start placeholder="Start" required></textarea>
+        </mat-form-field><br>
+        <mat-form-field class="example-full-width" appearance="fill">
+          <mat-label>Destination: </mat-label>
+          <textarea matInput  id="destination" #destination placeholder="Destination" required></textarea>
+        </mat-form-field><br>
+        <mat-accordion>
+          <mat-expansion-panel (opened)="detailed = true" (closed)="detailed = false" class="example-full-width" appearance="fill">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Detailed options
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <br>
+        <mat-label>Interests</mat-label>
+        <span class="example-list-section">
+          <ul>
+            <li *ngFor="let int of interests">
+              <input type="checkbox" [value]="int.value" [checked]="int.selected" (change)="changeValue($event)">
+                {{int.name}}
+            </li>
+          </ul>
+        </span>
+        <br>
+        <br>
+        <mat-checkbox id="bike" #bike>
+          Show bike sharing
+        </mat-checkbox>
+        <br>
+        <mat-checkbox id="weather" #weather [checked]="true">
+          Show weather
+        </mat-checkbox>
+        <br><br>
+        <h3>Trip Options</h3>
+        <br>
+        <mat-form-field>
+            <mat-label>Number of City: </mat-label>
+            <input matInput  id="limit" #limit type="number" [max]="8" [min]="0" value="3" required>
+        </mat-form-field>
+        <span style="padding-left: 20px"></span>
+        <mat-form-field>
+            <mat-label>Minimum Distance between city (in km): </mat-label>
+            <input matInput  id="minDistance" #minDistance type="number" [min]="0" value="1" required>
+        </mat-form-field>
+        <span style="padding-left: 20px"></span>
+        <mat-form-field>
+            <mat-label>Max Dietour (in km): </mat-label>
+            <input matInput  id="maxDetour" #maxDetour type="number" [min]="0" value="100" required>
+        </mat-form-field>
+        <br><br>
+        <mat-form-field>
+            <mat-label>Option: </mat-label>
+            <select matNativeControl name="profile" #profile required>
+                <option *ngFor="let prof of profiles" value="{{prof}}">{{prof}}</option>
+            </select>
+        </mat-form-field>
+
+          </mat-expansion-panel>
+        </mat-accordion>
+      </form><br>
+    </div>
+  </div>
+  

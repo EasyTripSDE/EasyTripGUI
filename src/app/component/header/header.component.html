@@ -1,5 +1,7 @@
 <mat-toolbar color="primary">
-  <h3 routerLink="/">Home</h3>
+  <h3 routerLink="/destSearch">Destination</h3>
+  <span style="padding-left: 10px;"></span>
+  <h3 routerLink="/pathSearch">Path</h3>
   <span class="fx-spacer"></span>
   <a *ngIf="session.getItem('username') == null; then notLoggedIn else loggedIn"> </a>
 </mat-toolbar>

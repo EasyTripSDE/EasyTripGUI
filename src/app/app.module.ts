@@ -27,11 +27,12 @@ import {MatIcon, MatIconModule} from '@angular/material/icon'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { HttpClientModule} from "@angular/common/http";
 import { AgmCoreModule } from '@agm/core';
+import { PathSearchComponent } from './component/pathSearch/pathSearch.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent, HomeComponent, FooterComponent, SignUpComponent, PathComponent, DestComponent
+    HeaderComponent, HomeComponent, FooterComponent, SignUpComponent, PathComponent, DestComponent, PathSearchComponent
   ],
   imports: [
     BrowserModule,

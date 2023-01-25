@@ -11,8 +11,6 @@ import {catchError, lastValueFrom, map, of} from "rxjs";
 })
 
 export class HomeComponent{
-  // @ts-ignore
-  members: Member[];
   latC = 45.4654219;
   lngC = 9.1859243;
   detailed = false;
@@ -43,7 +41,6 @@ export class HomeComponent{
   }
 
   changeValue(event: any){
-    console.log(event.target.value  + " " + event.target.checked);
     let value = event.target.value;
     for(let i = 0; i < this.interests.length; i++){
       if(this.interests[i].value == value){
@@ -52,9 +49,6 @@ export class HomeComponent{
     }
   }
 
-  path(){
-    this.router.navigateByUrl("/path");
-  }
 }
 
 

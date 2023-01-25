@@ -3,6 +3,43 @@
 
     <form class="example-list">
       <h1 style="padding-left: 40%">Trip choice</h1><br>
+      <mat-form-field class="example-full-width" appearance="fill">
+        <mat-label>Destination: </mat-label>
+        <textarea matInput  id="destination" #destination placeholder="Destination" required></textarea>
+      </mat-form-field><br>
+      <div class="example-full-width" appearance="fill">
+        <mat-label>Interests</mat-label>
+        <span class="example-list-section">
+          <ul>
+            <li *ngFor="let int of interests">
+              <input type="checkbox" [value]="int.value" [checked]="int.selected" (change)="changeValue($event)">
+                {{int.name}}
+            </li>
+          </ul>
+        </span>
+        <br><br>
+        <mat-checkbox id="weather" #weather [checked]="true">
+          Show weather
+        </mat-checkbox>
+        <br><br>
+        <mat-checkbox id="bike" #bike>
+          Show bike sharing
+        </mat-checkbox>
+        
+      </div><br><br>
+      <span style="padding-left: 37%"></span>
+      <button mat-raised-button color="primary" (click)="dest($event, $any(destination.value), $any(weather.checked), $any(bike.checked))">Search destination info</button>
+    </form><br>
+  </div>
+</div>
+
+
+<!--
+<div class="example-full-width">
+  <div class="center" style="width:100%">
+
+    <form class="example-list">
+      <h1 style="padding-left: 40%">Trip choice</h1><br>
       <span style="padding-left: 33%"></span>
       <button mat-raised-button color="primary" (click)="dest($event, $any(destination.value), $any(weather.checked), $any(bike.checked))">Search destination info</button>
       <span style="padding-left: 10px"></span>
@@ -43,3 +80,4 @@
     </form><br>
   </div>
 </div>
+-->

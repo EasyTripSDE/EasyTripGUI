@@ -9,6 +9,7 @@ import { Bike } from 'src/app/classes/bike';
 import { City } from 'src/app/classes/city';
 import { Weather } from 'src/app/classes/weather';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Info } from 'src/app/classes/info';
 
 @Component({
   selector: 'app-dest',
@@ -35,8 +36,10 @@ export class DestComponent implements OnInit{
   }
 
   async ngOnInit() {
+      if(this.data == undefined){
+        this.router.navigateByUrl("/destSearch")
+      }
       await this.parseInfo();
-      this.lists = this.city.poiList;
   }
 
   updateList(event: any){
@@ -131,15 +134,49 @@ export class DestComponent implements OnInit{
     let name = this.data.address.name;
     let desc = this.parseCity(this.data.address);
     this.city = new City(name, desc, this.data.address.point.lat, this.data.address.point.lng);
-    this.city.weatherList = this.parseWeather(this.data.weather);
-    if(this.data.bikes != undefined){
-      this.city.bikeList = this.parseBike(this.data.bike);
+    let size = 0;
+    if(this.data.poi != undefined && this.data.poi.length > 0){ size++}
+    if(this.data.weather != undefined && this.data.weather.length > 0){ size++}
+    if(this.data.bike != undefined && this.data.bike.length > 0){ size++}
+    this.city.options = new Array(size);
+    let i = 0;
+    if(this.data.poi != undefined && this.data.poi.length > 0){
+      this.city.poiList = this.parsePoi(this.data.poi);
+      this.lists = this.city.poiList;
+      this.setPoiPoint();
+      this.city.options[i] = new Info("poi", "Point of interests");
+      i++;
     }
-    this.city.poiList = this.parsePoi(this.data.poi);
+
+    if(this.data.weather != undefined && this.data.weather.length > 0){
+      this.city.weatherList = this.parseWeather(this.data.weather);
+      this.city.options[i] = new Info("weather", "Weather");
+      i++;
+      if(this.lists == undefined){
+        this.lists = this.city.weatherList;
+      }
+    }
+    if(this.data.bike != undefined && this.data.bike.length > 0){
+      this.city.bikeList = this.parseBike(this.data.bike);
+      this.city.options[i] = new Info("bike", "Bike");
+      i++;
+      if(this.lists == undefined){
+        this.lists = this.city.bikeList;
+        this.setBikePoint();
+      }
+    }
   }
 
   parseCity(city: any){
-    return city.name + " (" + city.countrycode + ")" + " is a " + city.osm_value + " located in " + city.state + ". Its postcode is " + city.postcode + ". Coordinate: " + city.point.lat + "; " + city.point.lng
+    let text = city.name + " (" + city.countrycode + ")" + " is a " + city.osm_value + " located in " + city.state + "."
+    if(city.postcode != undefined){
+      text += "Its postcode is " + city.postcode + "."
+    }
+
+    if(city.point.lat != undefined){
+      text += "Coordinate: " + city.point.lat + "; " + city.point.lng
+    }
+    return text;
   }
 
   parseWeather(weather: any){
@@ -181,11 +218,39 @@ export class DestComponent implements OnInit{
     let info = "";
     let desc = "";
     for(let i = 0; i < size; i++){
-        info = poi[i].tags.name + ": " + poi[i].tags.amenity;
-        desc = poi[i].tags.name + " is a " + poi[i].tags.amenity + ".";
-        desc += "It is located in " + poi[i].tags["addr:city"] + ", " + poi[i].tags["addr:street"] + ", " + poi[i].tags["addr:housenumber"] + ".";
-        desc += "<br>Contact: " + poi[i].tags["contact:phone"]; 
-        desc += "<br>Coordinates: " + poi[i].lat + "; " + poi[i].lon;
+        info = poi[i].tags.name;
+        desc = "<b>" + poi[i].tags.name + "</b>";
+        if(poi[i].tags.amenity != undefined){
+          info += ": " + poi[i].tags.amenity;
+          desc += " is a " + poi[i].tags.amenity + ".";
+        }
+         
+        if(poi[i].tags["addr:city"] != undefined){
+          desc += "<br>It is located in " + poi[i].tags["addr:city"]
+          if(poi[i].tags["addr:street"] != undefined){
+            desc += ", " + poi[i].tags["addr:street"];
+
+            if(poi[i].tags["addr:housenumber"] != undefined){
+              desc += ", " + poi[i].tags["addr:housenumber"] + ".";
+            }
+          }
+        } 
+        
+        if(poi[i].tags["contact:phone"] != undefined){
+          desc += "<br>Contact: " + poi[i].tags["contact:phone"]; 
+        }
+        if(poi[i].tags["phone"] != undefined){
+          desc += "<br>Contact: " + poi[i].tags["phone"]; 
+        }
+        if(poi[i].tags["email"] != undefined){
+          desc += "<br>Contact: " + poi[i].tags["email"]; 
+        }
+        if(poi[i].tags["website"] != undefined){
+          desc += "<br>Website: " + poi[i].tags["website"]; 
+        }
+        if(poi[i].lat != undefined){
+          desc += "<br>Coordinates: " + poi[i].lat + "; " + poi[i].lon;
+        }
         poiList[i] = new POI(i, info, desc, poi[i].lat, poi[i].lon);
     }
 
