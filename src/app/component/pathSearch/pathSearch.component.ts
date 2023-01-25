@@ -11,11 +11,21 @@ import {catchError, lastValueFrom, map, of} from "rxjs";
 })
 
 export class PathSearchComponent{
-  // @ts-ignore
-  members: Member[];
+  loading = false;
   latC = 45.4654219;
   lngC = 9.1859243;
-  profiles = [ "Car", "Car - Avoid motorway", "Car - Avoid toll", "Camper", "Scooter", "Foot", "Hike", "Bike", "Mountain bike", "Racing bike"]
+  profiles = [
+    { name: "car", value: "Car"},
+    { name: "car_avoid_motorway", value: "Car - Avoid motorway"},
+    { name: "car_avoid_toll", value: "Car - Avoid toll"},
+    { name: "small_truck", value: "Camper"},
+    { name: "scooter", value: "Scooter"},
+    { name: "foot", value: "Foot"},
+    { name: "hike", value: "Hike"},
+    { name: "bike", value: "Bike"},
+    { name: "mtb", value: "Mountain bike"},
+    { name: "racingbike", value: "Racing bike"}
+  ]
   detailed = false;
   interests = [{name: "Sustenance", value: "sustenance", selected: false}, {name: "Education", value: "education", selected: false},
   {name: "Entertainment", value: "entertainment", selected: false}, {name: "Tourism", value: "tourism", selected: true},
@@ -34,10 +44,8 @@ export class PathSearchComponent{
       }
     }
     url += '&limit=' + limit + '&minDistance=' + (minDistance*1000) + "&maxDetour=" + (maxDetour*1000) + "&profile=" + profile; 
-    
-    console.log(url);
-    console.log("http://localhost:12349/v1/trip/travel?start=Verona&end=Trento&bikes=true&interest=sustenance&limit=2");
 
+    this.loading = true;
     await lastValueFrom(this.http.get<any>(url).pipe(map(data => {
       console.log(data);
       this.router.navigateByUrl("/path", {state: data});

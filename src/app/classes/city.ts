@@ -10,7 +10,7 @@ export class City {
     lng: number;
     weatherList : Array<Weather> | undefined;
     poiList : Array<POI> | undefined;
-    bikeList : Array<Bike> | undefined;
+    bike : Bike | undefined;
     //@ts-ignore
     options: Array<Info>
 
@@ -29,7 +29,7 @@ export class City {
         return this.poiList;
     }
 
-    public getBikeList(){
-        return this.bikeList;
+    public getBike(){
+        return this.bike;
     }
 }

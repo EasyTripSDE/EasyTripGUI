@@ -1,10 +1,16 @@
 <div class="example-full-width">
     <div class="center" style="width:100%">
-  
       <form class="example-list">
-        <h1 style="padding-left: 40%">Trip choice</h1><br>
-        <span style="padding-left: 37%"></span>
-        <button mat-raised-button color="primary" (click)="path($event, $any(start.value), $any(destination.value), $any(weather.checked), $any(bike.checked), $any(limit.value), $any(minDistance.value), $any(maxDetour.value), $any(profile.value))">Search path info</button>
+        <h1 style="text-align: center">Trip choice</h1><br>
+        <div *ngIf="loading == true">
+          <h1 style="text-align: center"><b>Loading</b></h1>
+          <div style="text-align:center">
+            <img src="../../../assets/img/loading.png">
+          </div>
+        </div>
+        <div style="text-align:center">
+          <button mat-raised-button color="primary" (click)="path($event, $any(start.value), $any(destination.value), $any(weather.checked), $any(bike.checked), $any(limit.value), $any(minDistance.value), $any(maxDetour.value), $any(profile.value))">Search path info</button>
+        </div>
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Start: </mat-label>
             <textarea matInput  id="start" #start placeholder="Start" required></textarea>
@@ -49,24 +55,24 @@
         <span style="padding-left: 20px"></span>
         <mat-form-field>
             <mat-label>Minimum Distance between city (in km): </mat-label>
-            <input matInput  id="minDistance" #minDistance type="number" [min]="0" value="1" required>
+            <input matInput  id="minDistance" #minDistance type="number" [min]="0" value="20" required>
         </mat-form-field>
         <span style="padding-left: 20px"></span>
         <mat-form-field>
             <mat-label>Max Dietour (in km): </mat-label>
-            <input matInput  id="maxDetour" #maxDetour type="number" [min]="0" value="100" required>
+            <input matInput  id="maxDetour" #maxDetour type="number" [min]="0" value="10" required>
         </mat-form-field>
         <br><br>
         <mat-form-field>
             <mat-label>Option: </mat-label>
             <select matNativeControl name="profile" #profile required>
-                <option *ngFor="let prof of profiles" value="{{prof}}">{{prof}}</option>
+                <option *ngFor="let prof of profiles" value="{{prof.name}}">{{prof.value}}</option>
             </select>
         </mat-form-field>
 
           </mat-expansion-panel>
         </mat-accordion>
-      </form><br>
+      </form>
+      
     </div>
-  </div>
-  
+</div>

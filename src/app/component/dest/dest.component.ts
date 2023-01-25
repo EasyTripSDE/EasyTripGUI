@@ -39,6 +39,7 @@ export class DestComponent implements OnInit{
       if(this.data == undefined){
         this.router.navigateByUrl("/destSearch")
       }
+      console.log(this.data)
       await this.parseInfo();
   }
 
@@ -52,7 +53,7 @@ export class DestComponent implements OnInit{
         this.lists = this.city.poiList;
         this.setPoiPoint();
     } else if(event.target.value == "bike"){
-        this.lists = this.city.bikeList;
+        this.lists = this.city.bike;
         this.setBikePoint();
     } else if(event.target.value == "weather"){
         this.lists = this.city.weatherList;
@@ -80,14 +81,10 @@ export class DestComponent implements OnInit{
   }
 
   setBikePoint(){
-    let bikeList = this.city.getBikeList();
-    let size = bikeList?.length;
-    this.pointOnMap = new Array(size);
+    let bikeList = this.city.bike;
+    this.pointOnMap = new Array(1);
     // @ts-ignore
-    for(let i = 0; i < size; i++){
-        // @ts-ignore
-        this.pointOnMap[i] = new Point(bikeList[i].id, bikeList[i].lat, bikeList[i].lng);
-    }
+    this.pointOnMap = new Point(bikeList.id, bikeList.lat, bikeList.lng);
   }
 
   setPoiPoint(){
@@ -115,7 +112,7 @@ export class DestComponent implements OnInit{
   }
 
   getBike(id: number){
-    let bikeList = this.city.getBikeList();
+    let bikeList = this.city.bike;
     // @ts-ignore
     for(let i = 0; i < bikeList.length; i++){
         // @ts-ignore
@@ -136,7 +133,7 @@ export class DestComponent implements OnInit{
     this.city = new City(name, desc, this.data.address.point.lat, this.data.address.point.lng);
     let size = 0;
     if(this.data.poi != undefined && this.data.poi.length > 0){ size++}
-    if(this.data.weather != undefined && this.data.weather.length > 0){ size++}
+    if(this.data.weather != undefined){ size++}
     if(this.data.bike != undefined && this.data.bike.length > 0){ size++}
     this.city.options = new Array(size);
     let i = 0;
@@ -148,7 +145,7 @@ export class DestComponent implements OnInit{
       i++;
     }
 
-    if(this.data.weather != undefined && this.data.weather.length > 0){
+    if(this.data.weather != undefined){
       this.city.weatherList = this.parseWeather(this.data.weather);
       this.city.options[i] = new Info("weather", "Weather");
       i++;
@@ -157,11 +154,11 @@ export class DestComponent implements OnInit{
       }
     }
     if(this.data.bike != undefined && this.data.bike.length > 0){
-      this.city.bikeList = this.parseBike(this.data.bike);
+      this.city.bike = this.parseBike(this.data.bike);
       this.city.options[i] = new Info("bike", "Bike");
       i++;
       if(this.lists == undefined){
-        this.lists = this.city.bikeList;
+        this.lists = this.city.bike;
         this.setBikePoint();
       }
     }
@@ -198,18 +195,17 @@ export class DestComponent implements OnInit{
 
   parseBike(bike:any){
     let size = bike.length;
-    let bikeList = new Array(size);
+    let bikes = undefined;
     let info = "";
     let desc = "";
 
-    for(let i = 0; i < size; i++){
-        info = bike[i].name + " of " + bike[i].company;
-        desc = bike[i].name + " of " + bike[i].company + ".";
-        desc += "<br>" + "Located in: " + bike[i].location.city + " (" + bike[i].location.country +")";
-        desc += "<br>" + "Coordinate: " + bike[i].location.latitude + "; " + bike[i].location.longitude;
-        bikeList[i] = new Bike(i, info, desc, bike[i].location.latitude, bike[i].location.longitude);
-    }
-    return bikeList;
+    info = bike.name + " of " + bike.company;
+    desc = bike.name + " of " + bike.company + ".";
+    desc += "<br>" + "Located in: " + bike.location.city + " (" + bike.location.country +")";
+    desc += "<br>" + "Coordinate: " + bike.location.latitude + "; " + bike.location.longitude;
+    bikes = new Bike(0, info, desc, bike.location.latitude, bike.location.longitude);
+    
+    return bikes;
   }
 
   parsePoi(poi: any){

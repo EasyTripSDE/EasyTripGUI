@@ -25,7 +25,8 @@ export class PathComponent implements OnInit{
     interests = ["Sustenance", "Education", "Entertainment", "Tourism", "Accomodation"]
     lists: any | undefined;
     listSelected= "path";
-    pathInfo ="";
+    pathInfo="";
+    generalInfo ="";
     cityToShow: number = 0;
     // @ts-ignore
     city : Array<City>; 
@@ -45,11 +46,13 @@ export class PathComponent implements OnInit{
     }
     await this.parseInfo();
     this.lists = this.pathList;
+    this.generalInfo = this.pathInfo;
   }
 
   updateCity(event: any){
     // @ts-ignore
     document.getElementById("detailedInfo").innerHTML = "";
+    this.generalInfo = "";
 
     this.cityToShow = event.target.value;
     this.latC = this.city[this.cityToShow].lat;
@@ -62,14 +65,17 @@ export class PathComponent implements OnInit{
       } else {
         this.listSelected = "path";
         this.lists = this.pathList;
+        this.generalInfo = this.pathInfo;
       }
     }else if(this.listSelected  == "bike"){
-      if(this.city[this.cityToShow].bikeList != undefined){
-        this.lists = this.city[this.cityToShow].getBikeList();
+      if(this.city[this.cityToShow].bike != undefined){
+        //@ts-ignore
+        this.generalInfo = this.city[this.cityToShow].bike?.desc;
         this.setBikePoint();
       } else {
         this.listSelected = "path";
         this.lists = this.pathList;
+        this.generalInfo = this.pathInfo;
       }
     } else if(this.listSelected == "weather"){
       if(this.city[this.cityToShow].weatherList != undefined){
@@ -77,6 +83,7 @@ export class PathComponent implements OnInit{
       } else {
         this.listSelected = "path";
         this.lists = this.pathList;
+        this.generalInfo = this.pathInfo;
       }
     }
   }
@@ -84,18 +91,20 @@ export class PathComponent implements OnInit{
   updateList(event: any){
     // @ts-ignore
     document.getElementById("detailedInfo").innerHTML = "";
-
+    this.generalInfo = "";
+    this.lists = undefined;
     this.listSelected = event.target.value;
     this.pointOnMap = undefined;
     if(event.target.value == "path"){
         this.lists = this.pathList;
+        this.generalInfo = this.pathInfo;
     } else if(event.target.value == "poi"){
         // @ts-ignore
         this.lists = this.city[this.cityToShow].poiList;
         this.setPoiPoint();
     } else if(event.target.value == "bike"){
         // @ts-ignore
-        this.lists = this.city[this.cityToShow].bikeList;
+        this.generalInfo = this.city[this.cityToShow].bike.desc;
         this.setBikePoint();
     } else if(event.target.value == "weather"){
         // @ts-ignore
@@ -115,9 +124,7 @@ export class PathComponent implements OnInit{
     let text = "";
     if(this.listSelected == "poi"){
         text = (this.getPOI(id))?.info;
-    } else if(this.listSelected == "bike"){
-        text = (this.getBike(id))?.info;
-    }
+    } 
 
     // @ts-ignore
     document.getElementById("detailedInfo").innerHTML = text;
@@ -125,14 +132,11 @@ export class PathComponent implements OnInit{
 
   setBikePoint(){
     // @ts-ignore
-    let bikeList = (this.city[this.cityToShow]).getBikeList();
-    let size = bikeList?.length;
-    this.pointOnMap = new Array(size);
+    let bike = (this.city[this.cityToShow]).bike
+    this.pointOnMap = new Array(1);
+     
     // @ts-ignore
-    for(let i = 0; i < size; i++){
-        // @ts-ignore
-        this.pointOnMap[i] = new Point(bikeList[i].id, bikeList[i].lat, bikeList[i].lng);
-    }
+    this.pointOnMap[0] = new Point(bike.id, bike.lat, bike.lng);
   }
 
   setPoiPoint(){
@@ -160,34 +164,23 @@ export class PathComponent implements OnInit{
     }
     return {info: ""};
   }
-
-  getBike(id: number){
-    // @ts-ignore
-    let bikeList = (this.city[this.cityToShow]).getBikeList();
-    // @ts-ignore
-    for(let i = 0; i < bikeList.length; i++){
-        // @ts-ignore
-        if(id == bikeList[i].id){
-            // @ts-ignore
-            return bikeList[i];
-        }
-    }
-    return {info: ""};
-  }
   
   parseInfo(){
     console.log(this.data);
     this.parseRoute(this.data.paths[0]);
     this.latC = this.data.end.address.point.lat;
     this.lngC = this.data.end.address.point.lng;
-    let numCity = this.data.intermediates.length;
+    let numCity = 0
     
-    this.city = new Array(numCity + 2);
+    if(this.data.intermediates != undefined){
+      this.data.intermediates.length;
+    }
+    
+    this.city = new Array(numCity + 1);
     this.parseCityValue(this.data.end, 0);
     for(let i = 0; i < numCity; i++){
         this.parseCityValue(this.data.intermediates[i], i+1);
     }
-    this.parseCityValue(this.data.start, numCity+1);
     this.pointOnMap = undefined; 
   }
 
@@ -198,7 +191,7 @@ export class PathComponent implements OnInit{
     let size = 0;
     if(infoCity.poi != undefined && infoCity.poi.length > 0){ size++}
     if(infoCity.weather != undefined && infoCity.weather.length > 0){ size++}
-    if(infoCity.bike != undefined && infoCity.bike.length > 0){ size++}
+    if(infoCity.bike != undefined  && infoCity.bike.length > 0){ size++}
     this.city[index].options = new Array(size+1);
     this.city[index].options[0] = new Info("path", "Path");
     let i = 1;
@@ -209,7 +202,7 @@ export class PathComponent implements OnInit{
       this.city[index].options[i] = new Info("poi", "Point of interests");
       i++;
     }
-
+    
     if(infoCity.weather != undefined){
       this.city[index].weatherList = this.parseWeather(infoCity.weather);
       this.city[index].options[i] = new Info("weather", "Weather");
@@ -218,20 +211,26 @@ export class PathComponent implements OnInit{
         this.lists = this.city[index].weatherList;
       }
     }
-    if(infoCity.bike != undefined){
-      this.city[index].bikeList = this.parseBike(infoCity.bike);
-      
+    if(infoCity.bike != undefined && infoCity.bike.length > 0){
+      this.city[index].bike = this.parseBike(infoCity.bike);
       this.city[index].options[i] = new Info("bike", "Bike");
       i++;
       if(this.lists == undefined){
-        this.lists = this.city[index].bikeList;
+        this.lists = this.city[index].bike;
         this.setBikePoint();
       }
     }
   }
 
   parseCity(city: any){
-    let text = city.name + " (" + city.countrycode + ")" + " is a " + city.osm_value + " located in " + city.state + "."
+    let text = "";
+
+    if(city.city != undefined){
+      text = city.city
+    } else {
+      text = city.name;
+    }
+    text += " (" + city.countrycode + ")" + " is a " + city.osm_value + " located in " + city.state + "."
     if(city.postcode != undefined){
       text += "Its postcode is " + city.postcode + "."
     }
@@ -260,19 +259,24 @@ export class PathComponent implements OnInit{
   }
 
   parseBike(bike:any){
-    let size = bike.length;
-    let bikeList = new Array(size);
+    let bikes = undefined
     let info = "";
     let desc = "";
 
-    for(let i = 0; i < size; i++){
-        info = bike[i].name + " of " + bike[i].company;
-        desc = bike[i].name + " of " + bike[i].company + ".";
-        desc += "<br>" + "Located in: " + bike[i].location.city + " (" + bike[i].location.country +")";
-        desc += "<br>" + "Coordinate: " + bike[i].location.latitude + "; " + bike[i].location.longitude;
-        bikeList[i] = new Bike(i, info, desc, bike[i].location.latitude, bike[i].location.longitude);
+    info = bike.name;
+    desc = bike.name;
+    if(bike.company != undefined){
+      desc +=" of " + bike.company + ".";
     }
-    return bikeList;
+    if(bike.location.city != undefined){
+      desc += "<br>" + "Located in: " + bike.location.city + " (" + bike.location.country +")";
+    }
+    if(bike.location.latitude != undefined){
+      desc += "<br>" + "Coordinate: " + bike.location.latitude + "; " + bike.location.longitude;
+    }
+    bikes = new Bike(0, info, desc, bike.location.latitude, bike.location.longitude);
+    
+    return bikes;
   }
 
   parsePoi(poi: any){
