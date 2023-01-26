@@ -1,0 +1,41 @@
+<style>
+ 
+    .dest {
+      padding-top: 10px;
+      float: left;
+      width: 50%;
+      text-align: center;
+    }
+  
+    .path {
+      padding-top: 10px;
+      float: right;
+      width: 50%;
+      text-align: center;
+    }
+</style>
+
+<div>
+    <div class="dest">
+        <h2 style="text-align:center">Destination search</h2>
+        <br><br>
+        <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
+            <div *cdkVirtualFor="let element of destList"  class="example-box">{{element.desc}}
+                <div style="text-align:center">
+                    <button mat-raised-button color="primary" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
+                </div>
+            </div>
+        </cdk-virtual-scroll-viewport>
+    </div>
+    <div class="path">
+        <h2 style="text-align:center">Path search</h2>
+        <br><br>
+        <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
+            <div *cdkVirtualFor="let element of pathList"  class="example-box">{{element.desc}}
+                <div style="text-align:center">
+                    <button mat-raised-button color="primary" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
+                </div>
+            </div>
+        </cdk-virtual-scroll-viewport>
+    </div>
+</div>

@@ -14,6 +14,7 @@ export class HomeComponent{
   latC = 45.4654219;
   lngC = 9.1859243;
   detailed = false;
+  loading = false;
   interests = [{name: "Sustenance", value: "sustenance", selected: false}, {name: "Education", value: "education", selected: false},
   {name: "Entertainment", value: "entertainment", selected: false}, {name: "Tourism", value: "tourism", selected: true},
   {name: "Accomodation", value: "accomodation", selected: false}]
@@ -30,8 +31,8 @@ export class HomeComponent{
         url += "&interest=" + this.interests[i].value;
       }
     }
-    console.log("http://localhost:12349/v1/trip/destination?address=Trento&weather=true&bikes=false&interest=tourism&interest=accomodation");
-    console.log(url)
+    
+    this.loading = true;
     await lastValueFrom(this.http.get<any>('' + url).pipe(map(data => {
       this.router.navigateByUrl("/destination", {state: data.message});
     }),catchError(error => {

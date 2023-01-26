@@ -16,15 +16,8 @@ export class PathSearchComponent{
   lngC = 9.1859243;
   profiles = [
     { name: "car", value: "Car"},
-    { name: "car_avoid_motorway", value: "Car - Avoid motorway"},
-    { name: "car_avoid_toll", value: "Car - Avoid toll"},
-    { name: "small_truck", value: "Camper"},
-    { name: "scooter", value: "Scooter"},
     { name: "foot", value: "Foot"},
-    { name: "hike", value: "Hike"},
-    { name: "bike", value: "Bike"},
-    { name: "mtb", value: "Mountain bike"},
-    { name: "racingbike", value: "Racing bike"}
+    { name: "bike", value: "Bike"}
   ]
   detailed = false;
   interests = [{name: "Sustenance", value: "sustenance", selected: false}, {name: "Education", value: "education", selected: false},
@@ -37,18 +30,43 @@ export class PathSearchComponent{
 
   async path(event: any, start: string, end: string, weather: boolean, bike: boolean, limit: number, minDistance: number, maxDetour: number, profile: string){
     event.preventDefault();
-    let url = 'http://localhost:12349/v1/trip/travel?start=' + start + '&end=' + end + "&weather=" + weather + "&bikes=" + bike;
+    let url = '/v1/trip/travel?start=' + start + '&end=' + end + "&weather=" + weather + "&bikes=" + bike;
+    let sizeInt = 0;
     for(let i = 0; i < this.interests.length; i++){
       if(this.interests[i].selected == true){
         url += "&interest=" + this.interests[i].value;
+        sizeInt++;
       }
     }
     url += '&limit=' + limit + '&minDistance=' + (minDistance*1000) + "&maxDetour=" + (maxDetour*1000) + "&profile=" + profile; 
 
+    let inte = new Array(sizeInt);
+    let y = 0;
+    for(let i = 0; i < this.interests.length; i++){
+        if(this.interests[i].selected == true){
+          inte[y] = this.interests[i].value;
+          y++;
+        }
+      }
+
+    let param = {
+        "type": "path",
+        "url": url,
+        "start": start,
+        "end": end,
+        "weather": weather,
+        "bikes": bike,
+        "interests": inte,
+        "limit": limit,
+        "minDistance": minDistance*1000,
+        "maxDetour": maxDetour*1000,
+        "profile": profile,
+    }
+
     this.loading = true;
-    await lastValueFrom(this.http.get<any>(url).pipe(map(data => {
+    await lastValueFrom(this.http.get<any>('http://localhost:12349' + url).pipe(map(data => {
       console.log(data);
-      this.router.navigateByUrl("/path", {state: data});
+      this.router.navigateByUrl("/path", {state: {"data": data, "param": param}});
     }),catchError(error => {
       console.log(error)
       return of([]);

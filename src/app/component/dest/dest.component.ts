@@ -25,7 +25,6 @@ export class DestComponent implements OnInit{
     interests = ["Sustenance", "Education", "Entertainment", "Tourism", "Accomodation"]
     lists: any | undefined;
     listSelected= "poi";
-    pathInfo ="";
     // @ts-ignore
     city : City; 
     pointOnMap : Array<Point> | undefined;
@@ -39,25 +38,34 @@ export class DestComponent implements OnInit{
       if(this.data == undefined){
         this.router.navigateByUrl("/destSearch")
       }
-      console.log(this.data)
       await this.parseInfo();
   }
 
   updateList(event: any){
     // @ts-ignore
     document.getElementById("detailedInfo").innerHTML = "";
+    // @ts-ignore
+    document.getElementById("generalInfo").innerHTML = ""
 
+    this.lists = undefined;
     this.listSelected = event.target.value;
     this.pointOnMap = undefined;
-    if(event.target.value == "poi"){
+    if(this.listSelected == "poi"){
+      console.log("A")
         this.lists = this.city.poiList;
         this.setPoiPoint();
-    } else if(event.target.value == "bike"){
-        this.lists = this.city.bike;
+    } else if(this.listSelected == "bike"){
+      console.log("B")
+        // @ts-ignore
+        document.getElementById("generalInfo").innerHTML = this.city.bike.desc;
         this.setBikePoint();
-    } else if(event.target.value == "weather"){
-        this.lists = this.city.weatherList;
+    } else if(this.listSelected == "weather"){
+      console.log("C");
+      this.lists = this.city.weatherList;
     }
+    console.log(this.lists);
+    console.log(this.city.options);
+    console.log(this.listSelected);
   }
 
   seeDetail(event:any){
@@ -72,19 +80,17 @@ export class DestComponent implements OnInit{
     let text = "";
     if(this.listSelected == "poi"){
         text = (this.getPOI(id))?.info;
-    } else if(this.listSelected == "bike"){
-        text = (this.getBike(id))?.info;
-    }
+    } 
 
     // @ts-ignore
     document.getElementById("detailedInfo").innerHTML = text;
   }
 
   setBikePoint(){
-    let bikeList = this.city.bike;
+    let bike = this.city.bike;
     this.pointOnMap = new Array(1);
     // @ts-ignore
-    this.pointOnMap = new Point(bikeList.id, bikeList.lat, bikeList.lng);
+    this.pointOnMap = new Point(bike.id, bike.lat, bike.lng);
   }
 
   setPoiPoint(){
@@ -127,14 +133,14 @@ export class DestComponent implements OnInit{
   parseInfo(){
     this.latC = this.data.address.point.lat;
     this.lngC = this.data.address.point.lng;
-    
+
     let name = this.data.address.name;
     let desc = this.parseCity(this.data.address);
     this.city = new City(name, desc, this.data.address.point.lat, this.data.address.point.lng);
     let size = 0;
     if(this.data.poi != undefined && this.data.poi.length > 0){ size++}
     if(this.data.weather != undefined){ size++}
-    if(this.data.bike != undefined && this.data.bike.length > 0){ size++}
+    if(this.data.bike != "empty"){ size++}
     this.city.options = new Array(size);
     let i = 0;
     if(this.data.poi != undefined && this.data.poi.length > 0){
@@ -153,7 +159,7 @@ export class DestComponent implements OnInit{
         this.lists = this.city.weatherList;
       }
     }
-    if(this.data.bike != undefined && this.data.bike.length > 0){
+    if(this.data.bike != "empty"){
       this.city.bike = this.parseBike(this.data.bike);
       this.city.options[i] = new Info("bike", "Bike");
       i++;
@@ -194,17 +200,12 @@ export class DestComponent implements OnInit{
   }
 
   parseBike(bike:any){
-    let size = bike.length;
-    let bikes = undefined;
-    let info = "";
     let desc = "";
 
-    info = bike.name + " of " + bike.company;
-    desc = bike.name + " of " + bike.company + ".";
+    desc = bike.name;
     desc += "<br>" + "Located in: " + bike.location.city + " (" + bike.location.country +")";
     desc += "<br>" + "Coordinate: " + bike.location.latitude + "; " + bike.location.longitude;
-    bikes = new Bike(0, info, desc, bike.location.latitude, bike.location.longitude);
-    
+    let bikes = new Bike(0, desc, bike.location.latitude, bike.location.longitude);
     return bikes;
   }
 

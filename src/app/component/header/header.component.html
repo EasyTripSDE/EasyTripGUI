@@ -1,7 +1,9 @@
 <mat-toolbar color="primary">
   <h3 routerLink="/destSearch">Destination</h3>
-  <span style="padding-left: 10px;"></span>
+  <span style="padding-left: 30px;"></span>
   <h3 routerLink="/pathSearch">Path</h3>
+  <span style="padding-left: 30px;"></span>
+  <h3 *ngIf="session.getItem('token') != undefined" routerLink="/history">History</h3>
   <span class="fx-spacer"></span>
   <a *ngIf="session.getItem('username') == null; then notLoggedIn else loggedIn"> </a>
 </mat-toolbar>
@@ -33,9 +35,11 @@
 </ng-template>
 
 <ng-template #loggedIn>
-  <button [matMenuTriggerFor]="profile" mat-fab color="indigo">  {{session.getItem("username")}} </button>
-  <mat-menu #profile="matMenu" class="mymegamenu">
-    <button mat-menu-item (click)="logout()">
-      <mat-icon>exit_to_app</mat-icon> Logout </button>
-  </mat-menu>
+  <div ngbDropdown>
+    <button [matMenuTriggerFor]="profile" mat-fab color="indigo">  {{session.getItem("username")}} </button>
+    <mat-menu #profile="matMenu" class="mymegamenu">
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon> Logout </button>
+    </mat-menu>
+  </div>
 </ng-template>

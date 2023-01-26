@@ -28,15 +28,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { HttpClientModule} from "@angular/common/http";
 import { AgmCoreModule } from '@agm/core';
 import { PathSearchComponent } from './component/pathSearch/pathSearch.component';
+import { HistoryComponent } from './component/history/history.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent, HomeComponent, FooterComponent, SignUpComponent, PathComponent, DestComponent, PathSearchComponent
+    HeaderComponent, HomeComponent, HistoryComponent, FooterComponent, SignUpComponent, PathComponent, DestComponent, PathSearchComponent
   ],
   imports: [
     BrowserModule,
-    MatMenuModule, ScrollingModule, MatExpansionModule, MatRadioModule, MatIconModule, MatSelectModule, MatCheckboxModule, MatInputModule, MatButtonModule, MatTabsModule, MatToolbarModule, MatListModule, MatFormFieldModule, MatDividerModule,  MatToolbarModule, MatGridListModule,
+    MatMenuModule, MatFormFieldModule, MatInputModule, ScrollingModule, MatExpansionModule, MatRadioModule, MatIconModule, MatSelectModule, MatCheckboxModule, MatInputModule, MatButtonModule, MatTabsModule, MatToolbarModule, MatListModule, MatFormFieldModule, MatDividerModule,  MatToolbarModule, MatGridListModule,
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,

@@ -2,7 +2,13 @@
   <div class="center" style="width:100%">
 
     <form class="example-list">
-      <h1 style="padding-left: 40%">Trip choice</h1><br>
+      <h1 style="text-align: center">Trip choice</h1><br>
+      <div *ngIf="loading == true">
+        <h1 style="text-align: center"><b>Loading</b></h1>
+        <div style="text-align:center">
+          <img src="../../../assets/img/loading.png">
+        </div>
+      </div>
       <mat-form-field class="example-full-width" appearance="fill">
         <mat-label>Destination: </mat-label>
         <textarea matInput  id="destination" #destination placeholder="Destination" required></textarea>
@@ -25,10 +31,10 @@
         <mat-checkbox id="bike" #bike>
           Show bike sharing
         </mat-checkbox>
-        
       </div><br><br>
-      <span style="padding-left: 37%"></span>
-      <button mat-raised-button color="primary" (click)="dest($event, $any(destination.value), $any(weather.checked), $any(bike.checked))">Search destination info</button>
+      <div style="text-align: center">
+        <button mat-raised-button color="primary" (click)="dest($event, $any(destination.value), $any(weather.checked), $any(bike.checked))">Search destination info</button>
+      </div>
     </form><br>
   </div>
 </div>

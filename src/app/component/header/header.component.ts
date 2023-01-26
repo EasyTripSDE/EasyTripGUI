@@ -39,7 +39,6 @@ export class HeaderComponent {
     await lastValueFrom(this.http.post<any>('http://localhost:12345/v1/users/login', body, {headers: headers}).pipe(map(data => {
       this.session.setItem("username", data.username);
       this.session.setItem("token", data.token);
-      this.router.navigateByUrl("/");
     }),catchError(error => {
       console.log(error);
       // @ts-ignore

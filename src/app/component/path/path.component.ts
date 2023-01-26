@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { AgmMap, MapsAPILoader } from '@agm/core';
 import { Point } from 'src/app/classes/point';
 import { PathPoint } from 'src/app/classes/pathPoint';
@@ -10,6 +10,7 @@ import { City } from 'src/app/classes/city';
 import { Weather } from 'src/app/classes/weather';
 import { Router } from '@angular/router';
 import { Info } from 'src/app/classes/info';
+import {catchError, lastValueFrom, map, of} from "rxjs";
 
 @Component({
   selector: 'app-path',
@@ -26,7 +27,6 @@ export class PathComponent implements OnInit{
     lists: any | undefined;
     listSelected= "path";
     pathInfo="";
-    generalInfo ="";
     cityToShow: number = 0;
     // @ts-ignore
     city : Array<City>; 
@@ -34,48 +34,77 @@ export class PathComponent implements OnInit{
     pathPoints : Array<PathPoint> | undefined;
     pathList : Array<PathInfo> | undefined;
     data: any;
-        
+    param: any;
+    session = sessionStorage;        
 
   constructor(private http: HttpClient,  private apiloader: MapsAPILoader, private router: Router) {
-    this.data = this.router.getCurrentNavigation()?.extras.state;
+    let d = this.router.getCurrentNavigation()?.extras.state;
+
+    if(d == undefined){
+      router.navigateByUrl("/pathSearch")
+    }    
+    // @ts-ignore
+    this.data = d.data;
+    // @ts-ignore
+    this.param = d.param;
+  }
+
+  async save(){
+    let p = this.param
+    const body = { p };
+
+    const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
+    await lastValueFrom(this.http.post<any>('http://localhost:12349/v1/history', body, { headers: headers }).pipe(map(data => {
+      // @ts-ignore
+      document.getElementById("generalInfo").innerHTML = "Information saved correctly";
+    }),catchError(error => {
+      console.log(error)
+      return of([]);
+    })));
   }
 
   async ngOnInit() {
-    if(this.data == undefined){
-      this.router.navigateByUrl("/pathSearch")
-    }
     await this.parseInfo();
     this.lists = this.pathList;
-    this.generalInfo = this.pathInfo;
+    // @ts-ignore
+    document.getElementById("generalInfo").innerHTML = this.pathInfo;
   }
 
   updateCity(event: any){
     // @ts-ignore
     document.getElementById("detailedInfo").innerHTML = "";
-    this.generalInfo = "";
+    // @ts-ignore
+    document.getElementById("generalInfo").innerHTML = "";
+    this.lists = undefined;
 
     this.cityToShow = event.target.value;
     this.latC = this.city[this.cityToShow].lat;
     this.lngC = this.city[this.cityToShow].lng;
     
-    if(this.listSelected == "poi"){
+    if(this.listSelected == "path"){
+      this.lists = this.pathList;
+      // @ts-ignore
+      document.getElementById("generalInfo").innerHTML = this.pathInfo;
+    } else if(this.listSelected == "poi"){
       if(this.city[this.cityToShow].poiList != undefined){
         this.lists = this.city[this.cityToShow].getPoiList();
         this.setPoiPoint();
       } else {
         this.listSelected = "path";
         this.lists = this.pathList;
-        this.generalInfo = this.pathInfo;
+        // @ts-ignore
+        document.getElementById("generalInfo").innerHTML = this.pathInfo;
       }
     }else if(this.listSelected  == "bike"){
       if(this.city[this.cityToShow].bike != undefined){
         //@ts-ignore
-        this.generalInfo = this.city[this.cityToShow].bike?.desc;
+        document.getElementById("generalInfo").innerHTML = this.city[this.cityToShow].bike?.desc;
         this.setBikePoint();
       } else {
         this.listSelected = "path";
         this.lists = this.pathList;
-        this.generalInfo = this.pathInfo;
+        // @ts-ignore
+        document.getElementById("generalInfo").innerHTML = this.pathInfo;
       }
     } else if(this.listSelected == "weather"){
       if(this.city[this.cityToShow].weatherList != undefined){
@@ -83,7 +112,8 @@ export class PathComponent implements OnInit{
       } else {
         this.listSelected = "path";
         this.lists = this.pathList;
-        this.generalInfo = this.pathInfo;
+        // @ts-ignore
+        document.getElementById("generalInfo").innerHTML = this.pathInfo;
       }
     }
   }
@@ -91,22 +121,24 @@ export class PathComponent implements OnInit{
   updateList(event: any){
     // @ts-ignore
     document.getElementById("detailedInfo").innerHTML = "";
-    this.generalInfo = "";
+    // @ts-ignore
+    document.getElementById("generalInfo").innerHTML = "";
     this.lists = undefined;
     this.listSelected = event.target.value;
     this.pointOnMap = undefined;
-    if(event.target.value == "path"){
+    if(this.listSelected == "path"){
         this.lists = this.pathList;
-        this.generalInfo = this.pathInfo;
-    } else if(event.target.value == "poi"){
+        // @ts-ignore
+        document.getElementById("generalInfo").innerHTML = this.pathInfo;
+    } else if(this.listSelected == "poi"){
         // @ts-ignore
         this.lists = this.city[this.cityToShow].poiList;
         this.setPoiPoint();
-    } else if(event.target.value == "bike"){
+    } else if(this.listSelected == "bike"){
         // @ts-ignore
-        this.generalInfo = this.city[this.cityToShow].bike.desc;
+        document.getElementById("generalInfo").innerHTML = this.city[this.cityToShow].bike.desc;
         this.setBikePoint();
-    } else if(event.target.value == "weather"){
+    } else if(this.listSelected == "weather"){
         // @ts-ignore
         this.lists = this.city[this.cityToShow].weatherList;
     }
@@ -166,20 +198,18 @@ export class PathComponent implements OnInit{
   }
   
   parseInfo(){
-    console.log(this.data);
     this.parseRoute(this.data.paths[0]);
     this.latC = this.data.end.address.point.lat;
     this.lngC = this.data.end.address.point.lng;
     let numCity = 0
     
     if(this.data.intermediates != undefined){
-      this.data.intermediates.length;
+      numCity = this.data.intermediates.length;
     }
-    
     this.city = new Array(numCity + 1);
     this.parseCityValue(this.data.end, 0);
     for(let i = 0; i < numCity; i++){
-        this.parseCityValue(this.data.intermediates[i], i+1);
+      this.parseCityValue(this.data.intermediates[i], i+1);
     }
     this.pointOnMap = undefined; 
   }
@@ -191,7 +221,7 @@ export class PathComponent implements OnInit{
     let size = 0;
     if(infoCity.poi != undefined && infoCity.poi.length > 0){ size++}
     if(infoCity.weather != undefined && infoCity.weather.length > 0){ size++}
-    if(infoCity.bike != undefined  && infoCity.bike.length > 0){ size++}
+    if(infoCity.bike != "empty"){ size++}
     this.city[index].options = new Array(size+1);
     this.city[index].options[0] = new Info("path", "Path");
     let i = 1;
@@ -211,7 +241,7 @@ export class PathComponent implements OnInit{
         this.lists = this.city[index].weatherList;
       }
     }
-    if(infoCity.bike != undefined && infoCity.bike.length > 0){
+    if(infoCity.bike != "empty"){
       this.city[index].bike = this.parseBike(infoCity.bike);
       this.city[index].options[i] = new Info("bike", "Bike");
       i++;
@@ -250,7 +280,7 @@ export class PathComponent implements OnInit{
     let forecast = "";
 
     for(let i = 0; i < size; i++){
-        date.setDate(date.getDate() + 1);
+      date.setDate(date.getDate() + 1);
         forecast = date.getDate() + "/" + (date.getMonth() + 1) + " " + weather.forecasts[i];
         weatherList[i+1] = new Weather(i+1, forecast)
     }
@@ -259,22 +289,16 @@ export class PathComponent implements OnInit{
   }
 
   parseBike(bike:any){
-    let bikes = undefined
-    let info = "";
     let desc = "";
 
-    info = bike.name;
     desc = bike.name;
-    if(bike.company != undefined){
-      desc +=" of " + bike.company + ".";
-    }
     if(bike.location.city != undefined){
       desc += "<br>" + "Located in: " + bike.location.city + " (" + bike.location.country +")";
     }
     if(bike.location.latitude != undefined){
       desc += "<br>" + "Coordinate: " + bike.location.latitude + "; " + bike.location.longitude;
     }
-    bikes = new Bike(0, info, desc, bike.location.latitude, bike.location.longitude);
+    let bikes = new Bike(0, desc, bike.location.latitude, bike.location.longitude);
     
     return bikes;
   }

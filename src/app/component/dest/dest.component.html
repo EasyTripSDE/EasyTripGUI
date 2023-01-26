@@ -46,9 +46,7 @@
       </select>
     </mat-form-field>
     <hr>
-    <div *ngIf="listSelected=='path'">
-      {{pathInfo}}
-      <hr>
+    <div id="generalInfo">
     </div>
     <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
       <div *cdkVirtualFor="let element of lists" (click)="seeDetail($event)" id="{{element.id}}" class="example-box">{{element.desc}}</div>
