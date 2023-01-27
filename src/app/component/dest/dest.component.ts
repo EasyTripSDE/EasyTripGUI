@@ -54,11 +54,14 @@ export class DestComponent implements OnInit{
 
   async save(){
     const body = { "type": this.param.type,
-    "address": this.param.address,
-    "weather": this.param.weather,
-    "bikes": this.param.bike,
-    "interests": this.param.interests,
-    "route": this.param.route};
+    "parameters": {
+      "address": this.param.address,
+      "weather": this.param.weather,
+      "bikes": this.param.bikes,
+      "interest": this.param.interest,
+    },
+    "route": this.param.route
+    };
     console.log(body);
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
     console.log(headers);

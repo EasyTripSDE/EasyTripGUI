@@ -21,7 +21,7 @@
         <br><br>
         <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
             <div *cdkVirtualFor="let element of destList let i=index;"  class="example-box">{{element.desc}}
-                <div style="text-align:center">
+                <div style="text-align:center; width: 50%">
                     <button mat-raised-button color="primary" id="{{element.id}}" (click)="searchDest($event, element.url, i)">Search</button>
                     <span style="padding-left:3px;"></span>
                     <button mat-raised-button color="primary" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
@@ -33,8 +33,9 @@
         <h2 style="text-align:center">Path search</h2>
         <br><br>
         <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
-            <div *cdkVirtualFor="let element of pathList let i=index;"  class="example-box">{{element.desc}}
-                <div style="text-align:center">
+            <div *cdkVirtualFor="let element of pathList let i=index;"  class="example-box">
+                <div style="width: 80%">{{element.desc}} </div>
+                <div style="text-align:center; width: 30%;">
                     <button mat-raised-button color="primary" id="{{element.id}}" (click)="searchPath($event, element.url, i)">Search</button>
                     <span style="padding-left:3px;"></span>
                     <button mat-raised-button color="primary" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>

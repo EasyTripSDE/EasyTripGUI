@@ -55,7 +55,7 @@ export class PathSearchComponent{
         "end": end,
         "weather": weather,
         "bikes": bike,
-        "interests": inte,
+        "interest": inte,
         "limit": limit,
         "minDistance": minDistance*1000,
         "maxDetour": maxDetour*1000,

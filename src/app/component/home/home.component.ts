@@ -49,7 +49,7 @@ export class HomeComponent{
         "address": address,
         "weather": weather,
         "bikes": bike,
-        "interests": inte,
+        "interest": inte,
         "route": "/v1/trip"
     }
 

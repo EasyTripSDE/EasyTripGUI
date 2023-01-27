@@ -51,15 +51,17 @@ export class PathComponent implements OnInit{
 
   async save(){
     const body = { "type": this.param.type,
-    "start": this.param.start,
-    "end": this.param.end,
-    "weather": this.param.weather,
-    "bikes": this.param.bike,
-    "interests": this.param.interests,
-    "limit": this.param.limit,
-    "minDistance": this.param.minDistance*1000,
-    "maxDetour": this.param.maxDetour*1000,
-    "profile": this.param.profile,
+    "parameters": {
+      "start": this.param.start,
+      "end": this.param.end,
+      "weather": this.param.weather,
+      "bikes": this.param.bikes,
+      "interest": this.param.interest,
+      "limit": +this.param.limit,
+      "minDistance": this.param.minDistance,
+      "maxDetour": this.param.maxDetour,
+      "profile": this.param.profile,
+    },
     "route": this.param.route };
     console.log(body);
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
