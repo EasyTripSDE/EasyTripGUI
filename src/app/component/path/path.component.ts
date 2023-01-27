@@ -50,10 +50,20 @@ export class PathComponent implements OnInit{
   }
 
   async save(){
-    let p = this.param
-    const body = { p };
-
+    const body = { "type": this.param.type,
+    "start": this.param.start,
+    "end": this.param.end,
+    "weather": this.param.weather,
+    "bikes": this.param.bike,
+    "interests": this.param.interests,
+    "limit": this.param.limit,
+    "minDistance": this.param.minDistance*1000,
+    "maxDetour": this.param.maxDetour*1000,
+    "profile": this.param.profile,
+    "route": this.param.route };
+    console.log(body);
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
+    console.log(headers);
     await lastValueFrom(this.http.post<any>('http://localhost:12349/v1/history', body, { headers: headers }).pipe(map(data => {
       // @ts-ignore
       document.getElementById("generalInfo").innerHTML = "Information saved correctly";
@@ -212,6 +222,7 @@ export class PathComponent implements OnInit{
       this.parseCityValue(this.data.intermediates[i], i+1);
     }
     this.pointOnMap = undefined; 
+    console.log(this.city);
   }
 
   parseCityValue(infoCity: any, index: number){

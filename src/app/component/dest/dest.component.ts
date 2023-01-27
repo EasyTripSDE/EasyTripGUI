@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import { HttpClient } from "@angular/common/http";
 import { AgmMap, MapsAPILoader } from '@agm/core';
 import { Point } from 'src/app/classes/point';
 import { PathPoint } from 'src/app/classes/pathPoint';
@@ -10,6 +9,8 @@ import { City } from 'src/app/classes/city';
 import { Weather } from 'src/app/classes/weather';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Info } from 'src/app/classes/info';
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import {catchError, lastValueFrom, map, of} from "rxjs";
 
 @Component({
   selector: 'app-dest',
@@ -29,9 +30,19 @@ export class DestComponent implements OnInit{
     city : City; 
     pointOnMap : Array<Point> | undefined;
     data : any;
+    session = sessionStorage;
+    param: any;
 
   constructor(private http: HttpClient,  private apiloader: MapsAPILoader, private route: ActivatedRoute, private router: Router) {
-    this.data = this.router.getCurrentNavigation()?.extras.state;
+    let d = this.router.getCurrentNavigation()?.extras.state;
+    console.log(d);
+    if(d == undefined){
+      router.navigateByUrl("/destSearch")
+    }    
+    // @ts-ignore
+    this.data = d.data;
+    // @ts-ignore
+    this.param = d.param;
   }
 
   async ngOnInit() {
@@ -40,6 +51,26 @@ export class DestComponent implements OnInit{
       }
       await this.parseInfo();
   }
+
+  async save(){
+    const body = { "type": this.param.type,
+    "address": this.param.address,
+    "weather": this.param.weather,
+    "bikes": this.param.bike,
+    "interests": this.param.interests,
+    "route": this.param.route};
+    console.log(body);
+    const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
+    console.log(headers);
+    await lastValueFrom(this.http.post<any>('http://localhost:12349/v1/history', body, { headers: headers }).pipe(map(data => {
+      // @ts-ignore
+      document.getElementById("generalInfo").innerHTML = "Information saved correctly";
+    }),catchError(error => {
+      console.log(error)
+      return of([]);
+    })));
+  }
+
 
   updateList(event: any){
     // @ts-ignore
@@ -51,21 +82,15 @@ export class DestComponent implements OnInit{
     this.listSelected = event.target.value;
     this.pointOnMap = undefined;
     if(this.listSelected == "poi"){
-      console.log("A")
         this.lists = this.city.poiList;
         this.setPoiPoint();
     } else if(this.listSelected == "bike"){
-      console.log("B")
         // @ts-ignore
         document.getElementById("generalInfo").innerHTML = this.city.bike.desc;
         this.setBikePoint();
     } else if(this.listSelected == "weather"){
-      console.log("C");
       this.lists = this.city.weatherList;
     }
-    console.log(this.lists);
-    console.log(this.city.options);
-    console.log(this.listSelected);
   }
 
   seeDetail(event:any){
@@ -90,7 +115,7 @@ export class DestComponent implements OnInit{
     let bike = this.city.bike;
     this.pointOnMap = new Array(1);
     // @ts-ignore
-    this.pointOnMap = new Point(bike.id, bike.lat, bike.lng);
+    this.pointOnMap[0] = new Point(bike.id, bike.lat, bike.lng);
   }
 
   setPoiPoint(){

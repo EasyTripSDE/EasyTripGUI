@@ -50,8 +50,7 @@ export class PathSearchComponent{
       }
 
     let param = {
-        "type": "path",
-        "url": url,
+        "type": "travel",
         "start": start,
         "end": end,
         "weather": weather,
@@ -61,6 +60,7 @@ export class PathSearchComponent{
         "minDistance": minDistance*1000,
         "maxDetour": maxDetour*1000,
         "profile": profile,
+        "route": "/v1/trip"
     }
 
     this.loading = true;

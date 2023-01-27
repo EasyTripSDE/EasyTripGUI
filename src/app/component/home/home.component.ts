@@ -25,16 +25,37 @@ export class HomeComponent{
 
   async dest(event: any, address: string, weather: boolean, bike: boolean){
     event.preventDefault();
+
     let url = 'http://localhost:12349/v1/trip/destination?address=' + address + "&weather=" + weather + "&bikes=" + bike;
+    let sizeInt = 0;
     for(let i = 0; i < this.interests.length; i++){
       if(this.interests[i].selected == true){
         url += "&interest=" + this.interests[i].value;
+        sizeInt++;
       }
     }
+
+    let inte = new Array(sizeInt);
+    let y = 0;
+    for(let i = 0; i < this.interests.length; i++){
+        if(this.interests[i].selected == true){
+          inte[y] = this.interests[i].value;
+          y++;
+        }
+      }
     
+      let param = {
+        "type": "destination",
+        "address": address,
+        "weather": weather,
+        "bikes": bike,
+        "interests": inte,
+        "route": "/v1/trip"
+    }
+
     this.loading = true;
     await lastValueFrom(this.http.get<any>('' + url).pipe(map(data => {
-      this.router.navigateByUrl("/destination", {state: data.message});
+      this.router.navigateByUrl("/destination", {state: {"data": data.message, "param": param}});
     }),catchError(error => {
       console.log(error)
       return of([]);

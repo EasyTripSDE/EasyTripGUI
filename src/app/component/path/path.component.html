@@ -52,7 +52,7 @@
     <span style="padding-left:2%"></span>
     <mat-form-field appearance="fill">
       <select matNativeControl name="toShow" required (change)="updateList($event)">
-        <option *ngFor="let opt of city[cityToShow].options" value="{{opt.name}}">{{opt.value}}</option>
+        <option *ngFor="let opt of city[cityToShow].options" value="{{opt.name}}" [selected]="opt.name == listSelected">{{opt.value}}</option>
       </select>
     </mat-form-field>
     <span style="padding-left:2%"></span>
@@ -60,8 +60,7 @@
       <button mat-raised-button color="primary" (click)="save()">Save research</button>
     </span>  
     <hr>
-    <div id="generalInfo">
-    </div>
+    <div id="generalInfo"> </div>
     <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
       <div *cdkVirtualFor="let element of lists" (click)="seeDetail($event)" id="{{element.id}}" class="example-box">{{element.desc}}</div>
     </cdk-virtual-scroll-viewport>
