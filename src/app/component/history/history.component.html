@@ -20,8 +20,10 @@
         <h2 style="text-align:center">Destination search</h2>
         <br><br>
         <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
-            <div *cdkVirtualFor="let element of destList"  class="example-box">{{element.desc}}
+            <div *cdkVirtualFor="let element of destList let i=index;"  class="example-box">{{element.desc}}
                 <div style="text-align:center">
+                    <button mat-raised-button color="primary" id="{{element.id}}" (click)="searchDest($event, element.url, i)">Search</button>
+                    <span style="padding-left:3px;"></span>
                     <button mat-raised-button color="primary" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
                 </div>
             </div>
@@ -31,8 +33,10 @@
         <h2 style="text-align:center">Path search</h2>
         <br><br>
         <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
-            <div *cdkVirtualFor="let element of pathList"  class="example-box">{{element.desc}}
+            <div *cdkVirtualFor="let element of pathList let i=index;"  class="example-box">{{element.desc}}
                 <div style="text-align:center">
+                    <button mat-raised-button color="primary" id="{{element.id}}" (click)="searchPath($event, element.url, i)">Search</button>
+                    <span style="padding-left:3px;"></span>
                     <button mat-raised-button color="primary" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
                 </div>
             </div>
