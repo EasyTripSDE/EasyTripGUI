@@ -48,13 +48,7 @@ export class HistoryComponent implements OnInit{
   async deleteElement(id:any){
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
     await lastValueFrom(this.http.delete<any>('http://localhost:12349/v1/history/' + id, { headers: headers }).pipe(map(data => {
-      console.log("A");
-      console.log(this.pathList);
-      console.log(this.destList);
       this.getHistory();
-      console.log("B");
-      console.log(this.pathList);
-      console.log(this.destList);
     }),catchError(error => {
       console.log(error)
       return of([]);
@@ -73,7 +67,6 @@ export class HistoryComponent implements OnInit{
   }
 
   setPathList(pathInfo: any){
-    console.log(pathInfo);
     this.pathList = new Array(pathInfo.length);
     let txt= ""
     let inte = undefined;
