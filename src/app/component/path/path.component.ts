@@ -39,7 +39,7 @@ export class PathComponent implements OnInit{
 
   constructor(private http: HttpClient,  private apiloader: MapsAPILoader, private router: Router) {
     let d = this.router.getCurrentNavigation()?.extras.state;
-
+    console.log(d);
     if(d == undefined){
       router.navigateByUrl("/pathSearch")
     }    
@@ -63,9 +63,7 @@ export class PathComponent implements OnInit{
       "profile": this.param.profile,
     },
     "route": this.param.route };
-    console.log(body);
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
-    console.log(headers);
     await lastValueFrom(this.http.post<any>('http://localhost:12349/v1/history', body, { headers: headers }).pipe(map(data => {
       // @ts-ignore
       document.getElementById("generalInfo").innerHTML = "Information saved correctly";
@@ -210,6 +208,7 @@ export class PathComponent implements OnInit{
   }
   
   parseInfo(){
+    console.log("A");
     this.parseRoute(this.data.paths[0]);
     this.latC = this.data.end.address.point.lat;
     this.lngC = this.data.end.address.point.lng;
@@ -224,7 +223,6 @@ export class PathComponent implements OnInit{
       this.parseCityValue(this.data.intermediates[i], i+1);
     }
     this.pointOnMap = undefined; 
-    console.log(this.city);
   }
 
   parseCityValue(infoCity: any, index: number){
@@ -234,7 +232,7 @@ export class PathComponent implements OnInit{
     let size = 0;
     if(infoCity.poi != undefined && infoCity.poi.length > 0){ size++}
     if(infoCity.weather != undefined && infoCity.weather.length > 0){ size++}
-    if(infoCity.bike != "empty"){ size++}
+    if(infoCity.bike != undefined && infoCity.bike != "empty"){ size++}
     this.city[index].options = new Array(size+1);
     this.city[index].options[0] = new Info("path", "Path");
     let i = 1;
@@ -254,7 +252,7 @@ export class PathComponent implements OnInit{
         this.lists = this.city[index].weatherList;
       }
     }
-    if(infoCity.bike != "empty"){
+    if(infoCity.bike != undefined && infoCity.bike != "empty"){
       this.city[index].bike = this.parseBike(infoCity.bike);
       this.city[index].options[i] = new Info("bike", "Bike");
       i++;

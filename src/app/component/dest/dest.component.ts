@@ -168,7 +168,7 @@ export class DestComponent implements OnInit{
     let size = 0;
     if(this.data.poi != undefined && this.data.poi.length > 0){ size++}
     if(this.data.weather != undefined){ size++}
-    if(this.data.bike != "empty"){ size++}
+    if(this.data.bike != undefined && this.data.bike != "empty"){ size++}
     this.city.options = new Array(size);
     let i = 0;
     if(this.data.poi != undefined && this.data.poi.length > 0){
@@ -187,7 +187,7 @@ export class DestComponent implements OnInit{
         this.lists = this.city.weatherList;
       }
     }
-    if(this.data.bike != "empty"){
+    if(this.data.bike != undefined && this.data.bike != "empty"){
       this.city.bike = this.parseBike(this.data.bike);
       this.city.options[i] = new Info("bike", "Bike");
       i++;

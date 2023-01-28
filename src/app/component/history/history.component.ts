@@ -72,7 +72,7 @@ export class HistoryComponent implements OnInit{
     let inte = undefined;
 
     for(let i = 0; i < pathInfo.length; i++){
-      txt = "Start: " + pathInfo[i].parameters.start + " End: " + pathInfo[i].parameters.end + "\n";
+      txt = "Start: " + pathInfo[i].parameters.start + " End: " + pathInfo[i].parameters.end + "<br>";
       if(pathInfo[i].parameters.interest.length > 0){
         inte = new Array(pathInfo[i].parameters.interest.length)
         txt += "Interests: ";
@@ -84,7 +84,7 @@ export class HistoryComponent implements OnInit{
           }
           txt += " ";
         }
-        txt += "\n"
+        txt += "<br>"
       } 
 
       if(pathInfo[i].parameters.bike == undefined || pathInfo[i].parameters.bike == false){
@@ -99,7 +99,7 @@ export class HistoryComponent implements OnInit{
         txt += "Weather: yes ";
       }
       
-      txt += "\n Other options: limit: " + pathInfo[i].parameters.limit + " min distance: "  + pathInfo[i].parameters.minDistance + " max detour: " + pathInfo[i].parameters.maxDetour + " profile: " + pathInfo[i].parameters.profile; 
+      txt += "<br> Other options: limit: " + pathInfo[i].parameters.limit + " min distance: "  + pathInfo[i].parameters.minDistance + " max detour: " + pathInfo[i].parameters.maxDetour + " profile: " + pathInfo[i].parameters.profile; 
 
       const parameters = { "type": "travel",
         "start": pathInfo[i].parameters.start,
@@ -125,7 +125,7 @@ export class HistoryComponent implements OnInit{
     let inte = undefined;
 
     for(let i = 0; i < destInfo.length; i++){
-      txt = "Address: " + destInfo[i].parameters.address + "\n";
+      txt = "Address: " + destInfo[i].parameters.address + "<br>";
       if(destInfo[i].parameters.interest.length > 0){
         inte = new Array(destInfo[i].parameters.interest.length)
         txt += "Interests: ";
@@ -137,7 +137,7 @@ export class HistoryComponent implements OnInit{
           }
           txt += " ";
         }
-        txt += "\n"
+        txt += "<br>"
       } 
 
       if(destInfo[i].parameters.bike == undefined || destInfo[i].parameters.bike == false){
