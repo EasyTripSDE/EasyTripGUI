@@ -39,7 +39,6 @@ export class PathComponent implements OnInit{
 
   constructor(private http: HttpClient,  private apiloader: MapsAPILoader, private router: Router) {
     let d = this.router.getCurrentNavigation()?.extras.state;
-    console.log(d);
     if(d == undefined){
       router.navigateByUrl("/pathSearch")
     }    
@@ -208,7 +207,6 @@ export class PathComponent implements OnInit{
   }
   
   parseInfo(){
-    console.log("A");
     this.parseRoute(this.data.paths[0]);
     this.latC = this.data.end.address.point.lat;
     this.lngC = this.data.end.address.point.lng;
@@ -277,7 +275,7 @@ export class PathComponent implements OnInit{
     }
 
     if(city.point.lat != undefined){
-      text += "Coordinate: " + city.point.lat + "; " + city.point.lng
+      text += "Coordinate: " + (city.point.lat).toFixed(2) + "; " + (city.point.lng).toFixed(2)
     }
     return text;
   }
@@ -307,7 +305,7 @@ export class PathComponent implements OnInit{
       desc += "<br>" + "Located in: " + bike.location.city + " (" + bike.location.country +")";
     }
     if(bike.location.latitude != undefined){
-      desc += "<br>" + "Coordinate: " + bike.location.latitude + "; " + bike.location.longitude;
+      desc += "<br>" + "Coordinate: " + (bike.location.latitude).toFixed(2) + "; " + (bike.location.longitude).toFixed(2);
     }
     let bikes = new Bike(0, desc, bike.location.latitude, bike.location.longitude);
     
@@ -351,7 +349,7 @@ export class PathComponent implements OnInit{
           desc += "<br>Website: " + poi[i].tags["website"]; 
         }
         if(poi[i].lat != undefined){
-          desc += "<br>Coordinates: " + poi[i].lat + "; " + poi[i].lon;
+          desc += "<br>Coordinates: " + (poi[i].lat).toFixed(2) + "; " + (poi[i].lon).toFixed(2);
         }
         poiList[i] = new POI(i, info, desc, poi[i].lat, poi[i].lon);
     }
@@ -361,14 +359,22 @@ export class PathComponent implements OnInit{
 
   parseRoute(routeObj: any){
     let text = "";
-    text = "Distance: " + (routeObj.distance)/100 + " km. Time: " + (routeObj.time)/(1000*60) + " minutes"
+    let dist :number = +(routeObj.distance / 100).toFixed(2);
+    let time :number = +(routeObj.time/(1000*60));
+    let hour=false;
+    if(time > 60){
+      time = +(time/60);
+      hour = true;
+    }
+    time = +time.toFixed(2);
+    text = "Distance: " + dist + " km. Time: " + time;
+    if(hour == false){
+      text += " minutes"
+    } else {
+      text += " hour";
+    }
     this.pathInfo = text;
-    /*
-    let minLng = routeObj.bbox[0];
-    let minLat = routeObj.bbox[1];
-    let maxLng = routeObj.bbox[2];
-    let maxLat = routeObj.bbox[3];
-    */
+
     let size = routeObj.points.coordinates.length;
     this.pathPoints = new Array(size) 
     for(let i = 0; i < size; i++){
@@ -377,7 +383,24 @@ export class PathComponent implements OnInit{
     let sizeInstructions = routeObj.instructions.length;
     this.pathList = new Array(sizeInstructions) 
     for(let i = 0; i < sizeInstructions; i++){
-        this.pathList[i] = new PathInfo(i, routeObj.instructions[i].text + " for " + routeObj.instructions[i].distance + " meters (" + routeObj.instructions[i].time/1000 + " seconds)"); 
+        text = routeObj.instructions[i].text + " for ";
+        dist = +routeObj.instructions[i].distance;   
+        if(dist < 1000){
+          text += dist.toFixed(2) + " meters (";
+        } else {
+          dist = dist /1000;
+          text += dist.toFixed(2) + " km (";
+        } 
+        time = routeObj.instructions[i].time/1000;
+
+        if(time < 60){
+          text += time.toFixed(0) + " seconds)";
+        } else if(time < 3600){
+          text += (time/60).toFixed(2) + " minutes)";
+        } else {
+          text += (time/(60*60)).toFixed(2) + " hour)";
+        }
+        this.pathList[i] = new PathInfo(i, text); 
     }
   }
 }

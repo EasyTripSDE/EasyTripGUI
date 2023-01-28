@@ -18,7 +18,14 @@
 <div>
     <div class="dest">
         <h2 style="text-align:center">Destination search</h2>
-        <br><br>
+        <br>
+        <div *ngIf="loadingDest == true">
+            <h1 style="text-align: center"><b>Loading</b></h1>
+            <div style="text-align:center">
+              <img style="height: 150px; width: 150px;" src="../../../assets/img/loading.png">
+            </div>
+          </div>
+        <br>
         <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
             <div *cdkVirtualFor="let element of destList let i=index;"  class="example-box">
                 <div style="width: 70%; padding-left:15px; text-align:left" innerHtml="{{element.desc}}"> </div>
@@ -32,7 +39,14 @@
     </div>
     <div class="path">
         <h2 style="text-align:center">Path search</h2>
-        <br><br>
+        <br>
+        <div *ngIf="loadingPath == true">
+            <h1 style="text-align: center"><b>Loading</b></h1>
+            <div style="text-align:center">
+              <img style="height: 150px; width: 150px;"  src="../../../assets/img/loading.png">
+            </div>
+        </div>
+        <br>
         <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
             <div *cdkVirtualFor="let element of pathList let i=index;"  class="example-box">
                 <div style="width: 70%; padding-left:15px; text-align:left" innerHtml="{{element.desc}}"> </div>

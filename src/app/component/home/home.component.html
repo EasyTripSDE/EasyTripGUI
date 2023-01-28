@@ -2,11 +2,11 @@
   <div class="center" style="width:100%">
 
     <form class="example-list">
-      <h1 style="text-align: center">Trip choice</h1><br>
+      <h1 style="text-align: center">Destination search</h1><br>
       <div *ngIf="loading == true">
         <h1 style="text-align: center"><b>Loading</b></h1>
         <div style="text-align:center">
-          <img src="../../../assets/img/loading.png">
+          <img style="height: 250px; width: 250px;"  src="../../../assets/img/loading.png">
         </div>
       </div>
       <mat-form-field class="example-full-width" appearance="fill">
@@ -38,52 +38,3 @@
     </form><br>
   </div>
 </div>
-
-
-<!--
-<div class="example-full-width">
-  <div class="center" style="width:100%">
-
-    <form class="example-list">
-      <h1 style="padding-left: 40%">Trip choice</h1><br>
-      <span style="padding-left: 33%"></span>
-      <button mat-raised-button color="primary" (click)="dest($event, $any(destination.value), $any(weather.checked), $any(bike.checked))">Search destination info</button>
-      <span style="padding-left: 10px"></span>
-      <button mat-raised-button color="primary" (click)="path()">Search path info</button>
-      <mat-error style="display: none;" id="errorMessage"></mat-error>
-      <mat-form-field class="example-full-width" appearance="fill">
-        <mat-label>Destination: </mat-label>
-        <textarea matInput  id="destination" #destination placeholder="Destination" required></textarea>
-      </mat-form-field><br>
-      <mat-accordion>
-        <mat-expansion-panel (opened)="detailed = true" (closed)="detailed = false" class="example-full-width" appearance="fill">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Detailed options
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <br>
-      <mat-label>Interests</mat-label>
-      <span class="example-list-section">
-        <ul>
-          <li *ngFor="let int of interests">
-            <input type="checkbox" [value]="int.value" [checked]="int.selected" (change)="changeValue($event)">
-              {{int.name}}
-          </li>
-        </ul>
-      </span>
-      <br>
-      <br>
-      <mat-checkbox id="bike" #bike>
-        Show bike sharing
-      </mat-checkbox>
-      <br>
-      <mat-checkbox id="weather" #weather [checked]="true">
-        Show weather
-      </mat-checkbox>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </form><br>
-  </div>
-</div>
--->

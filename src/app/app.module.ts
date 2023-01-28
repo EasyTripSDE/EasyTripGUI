@@ -3,7 +3,6 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './component/header/header.component';
-import { FooterComponent } from "./component/footer/footer.component";
 import { DestComponent } from './component/dest/dest.component';
 import { PathComponent } from './component/path/path.component';
 import { HomeComponent } from "./component/home/home.component";
@@ -33,7 +32,7 @@ import { HistoryComponent } from './component/history/history.component';
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent, HomeComponent, HistoryComponent, FooterComponent, SignUpComponent, PathComponent, DestComponent, PathSearchComponent
+    HeaderComponent, HomeComponent, HistoryComponent, SignUpComponent, PathComponent, DestComponent, PathSearchComponent
   ],
   imports: [
     BrowserModule,

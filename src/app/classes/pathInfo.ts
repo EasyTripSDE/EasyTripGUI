@@ -1,6 +1,5 @@
 
 export class PathInfo{
-    // @ts-ignore
     id: number;
     desc: string;
 

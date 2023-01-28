@@ -35,7 +35,6 @@ export class DestComponent implements OnInit{
 
   constructor(private http: HttpClient,  private apiloader: MapsAPILoader, private route: ActivatedRoute, private router: Router) {
     let d = this.router.getCurrentNavigation()?.extras.state;
-    console.log(d);
     if(d == undefined){
       router.navigateByUrl("/destSearch")
     }    
@@ -62,9 +61,7 @@ export class DestComponent implements OnInit{
     },
     "route": this.param.route
     };
-    console.log(body);
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
-    console.log(headers);
     await lastValueFrom(this.http.post<any>('http://localhost:12349/v1/history', body, { headers: headers }).pipe(map(data => {
       // @ts-ignore
       document.getElementById("generalInfo").innerHTML = "Information saved correctly";
@@ -199,13 +196,17 @@ export class DestComponent implements OnInit{
   }
 
   parseCity(city: any){
-    let text = city.name + " (" + city.countrycode + ")" + " is a " + city.osm_value + " located in " + city.state + "."
+    let text = city.name + " (" + city.countrycode + ")" + " is a " + city.osm_value;
+    if(city.state != undefined){
+     text += " located in " + city.state + "."
+    }
+
     if(city.postcode != undefined){
       text += "Its postcode is " + city.postcode + "."
     }
 
     if(city.point.lat != undefined){
-      text += "Coordinate: " + city.point.lat + "; " + city.point.lng
+      text += "Coordinate: " + (city.point.lat).toFixed(2) + "; " + (city.point.lng).toFixed(2)
     }
     return text;
   }
@@ -232,7 +233,7 @@ export class DestComponent implements OnInit{
 
     desc = bike.name;
     desc += "<br>" + "Located in: " + bike.location.city + " (" + bike.location.country +")";
-    desc += "<br>" + "Coordinate: " + bike.location.latitude + "; " + bike.location.longitude;
+    desc += "<br>" + "Coordinate: " + (bike.location.latitude).toFixed(2) + "; " + (bike.location.longitude).toFixed(2);
     let bikes = new Bike(0, desc, bike.location.latitude, bike.location.longitude);
     return bikes;
   }
@@ -274,7 +275,7 @@ export class DestComponent implements OnInit{
           desc += "<br>Website: " + poi[i].tags["website"]; 
         }
         if(poi[i].lat != undefined){
-          desc += "<br>Coordinates: " + poi[i].lat + "; " + poi[i].lon;
+          desc += "<br>Coordinates: " + (poi[i].lat).toFixed(2) + "; " + (poi[i].lon).toFixed(2);
         }
         poiList[i] = new POI(i, info, desc, poi[i].lat, poi[i].lon);
     }

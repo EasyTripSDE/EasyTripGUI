@@ -21,11 +21,8 @@ export class SignUpComponent implements OnInit{
   }
 
   ngOnInit() {
-    console.log(this.activatedRoute.queryParams);
-    console.log(this.activatedRoute.params);
     this.activatedRoute.queryParams.subscribe(params => {
       this.token = params['token'];
-      console.log(this.token);
     });
   }
 

@@ -14,6 +14,8 @@ import { HistoryInfo } from 'src/app/classes/historyInfo';
 export class HistoryComponent implements OnInit{
   destList: Array<HistoryInfo> | undefined
   pathList: Array<HistoryInfo> | undefined
+  loadingPath = false;
+  loadingDest = false;
   
   constructor(private router: Router, private http: HttpClient,  private apiloader: MapsAPILoader) {
 
@@ -25,6 +27,7 @@ export class HistoryComponent implements OnInit{
 
   async searchDest(event: any, url:any, arrayIndex: number){
     event.preventDefault();
+    this.loadingDest = true;
     await lastValueFrom(this.http.get<any>('http://localhost:12349' + url).pipe(map(data => {
       // @ts-ignore
       this.router.navigateByUrl("/destination", {state: {"data": data.message, "param": this.destList[arrayIndex].params}});
@@ -36,6 +39,7 @@ export class HistoryComponent implements OnInit{
 
   async searchPath(event:any, url:any, arrayIndex: number){
     event.preventDefault();
+    this.loadingPath = true;
     await lastValueFrom(this.http.get<any>('http://localhost:12349' + url).pipe(map(data => {
       // @ts-ignore
       this.router.navigateByUrl("/path", {state: {"data": data, "param": this.destList[arrayIndex].params}});

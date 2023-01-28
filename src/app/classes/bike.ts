@@ -1,6 +1,4 @@
-
 export class Bike{
-    // @ts-ignore
     id: number;
     desc: string;
     lat: number;

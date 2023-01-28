@@ -1,6 +1,5 @@
 
 export class Weather{
-    // @ts-ignore
     id: number;
     desc: string;
 

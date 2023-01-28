@@ -1,11 +1,11 @@
 <div class="example-full-width">
     <div class="center" style="width:100%">
       <form class="example-list">
-        <h1 style="text-align: center">Trip choice</h1><br>
+        <h1 style="text-align: center">Travel search</h1><br>
         <div *ngIf="loading == true">
           <h1 style="text-align: center"><b>Loading</b></h1>
           <div style="text-align:center">
-            <img src="../../../assets/img/loading.png">
+            <img style="height: 250px; width: 250px;" src="../../../assets/img/loading.png">
           </div>
         </div>
         <div style="text-align:center">
@@ -59,7 +59,7 @@
         </mat-form-field>
         <span style="padding-left: 20px"></span>
         <mat-form-field>
-            <mat-label>Max Detour (in km): </mat-label>
+            <mat-label>Max Detour (in km, at max less than half of minDistance): </mat-label>
             <input matInput  id="maxDetour" #maxDetour type="number" [min]="0" value="10" required>
         </mat-form-field>
         <br><br>

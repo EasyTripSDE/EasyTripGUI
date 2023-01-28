@@ -22,7 +22,6 @@ export class HeaderComponent {
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe(params => {
       if(params['username'] != undefined) {
-        console.log(params['username'])
         this.session.setItem("username", params['username']);
         this.session.setItem("token", params['token']);
         this.router.navigateByUrl("/");

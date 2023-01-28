@@ -12,7 +12,5 @@ export class AppComponent implements OnInit{
   }
 
   async ngOnInit() {
-    //await this.data.getData();
-    console.log("ON INIT")
   }
 }
