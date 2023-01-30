@@ -88,6 +88,7 @@ export class PathComponent implements OnInit{
     this.lists = undefined;
 
     this.cityToShow = event.target.value;
+    this.pointOnMap = undefined;
     this.latC = this.city[this.cityToShow].lat;
     this.lngC = this.city[this.cityToShow].lng;
     
