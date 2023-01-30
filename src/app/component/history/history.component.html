@@ -30,9 +30,9 @@
             <div *cdkVirtualFor="let element of destList let i=index;"  class="example-box">
                 <div style="width: 70%; padding-left:15px; text-align:left" innerHtml="{{element.desc}}"> </div>
                 <div style="text-align:center; width: 30%">
-                    <button mat-raised-button color="primary" id="{{element.id}}" (click)="searchDest($event, element.url, i)">Search</button>
+                    <button mat-raised-button color="primary" [disabled]="loadingPath || loadingDest" id="{{element.id}}" (click)="searchDest($event, element.url, i)">Search</button>
                     <span style="padding-left:3px;"></span>
-                    <button mat-raised-button color="primary" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
+                    <button mat-raised-button color="primary" [disabled]="loadingPath || loadingDest" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
                 </div>
             </div>
         </cdk-virtual-scroll-viewport>
@@ -51,9 +51,9 @@
             <div *cdkVirtualFor="let element of pathList let i=index;"  class="example-box">
                 <div style="width: 70%; padding-left:15px; text-align:left" innerHtml="{{element.desc}}"> </div>
                 <div style="text-align:center; width: 30%;">
-                    <button mat-raised-button color="primary" id="{{element.id}}" (click)="searchPath($event, element.url, i)">Search</button>
+                    <button mat-raised-button color="primary" [disabled]="loadingPath || loadingDest" id="{{element.id}}" (click)="searchPath($event, element.url, i)">Search</button>
                     <span style="padding-left:3px;"></span>
-                    <button mat-raised-button color="primary" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
+                    <button mat-raised-button color="primary" [disabled]="loadingPath || loadingDest" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
                 </div>
             </div>
         </cdk-virtual-scroll-viewport>

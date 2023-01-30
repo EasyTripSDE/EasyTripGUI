@@ -1,9 +1,9 @@
 <mat-toolbar color="primary">
-  <h3 routerLink="/destSearch">Destination</h3>
+  <button style="color:white; border: 0px; background-color:#3f51b5" routerLink="/destSearch"><h3>Destination</h3></button>
   <span style="padding-left: 30px;"></span>
-  <h3 routerLink="/pathSearch">Path</h3>
+  <button style="color:white; border: 0px; background-color:#3f51b5" routerLink="/pathSearch"><h3>Path</h3></button>
   <span style="padding-left: 30px;"></span>
-  <h3 *ngIf="session.getItem('token') != undefined" routerLink="/history">History</h3>
+  <button *ngIf="session.getItem('token') != undefined" style="color:white; border: 0px; background-color:#3f51b5" routerLink="/history"><h3>History</h3></button>
   <span class="fx-spacer"></span>
   <a *ngIf="session.getItem('username') == null; then notLoggedIn else loggedIn"> </a>
 </mat-toolbar>

@@ -76,7 +76,8 @@ export class HistoryComponent implements OnInit{
     let inte = undefined;
 
     for(let i = 0; i < pathInfo.length; i++){
-      txt = "Start: " + pathInfo[i].parameters.start + " End: " + pathInfo[i].parameters.end + "<br>";
+      txt = "Date of search: " + (new Date(pathInfo[i].dateTime));
+      txt += "<br>Start: " + pathInfo[i].parameters.start + " End: " + pathInfo[i].parameters.end + "<br>";
       if(pathInfo[i].parameters.interest.length > 0){
         inte = new Array(pathInfo[i].parameters.interest.length)
         txt += "Interests: ";
@@ -123,13 +124,13 @@ export class HistoryComponent implements OnInit{
   }
 
   setDestList(destInfo: any){
-
     this.destList = new Array(destInfo.length);
     let txt= ""
     let inte = undefined;
 
     for(let i = 0; i < destInfo.length; i++){
-      txt = "Address: " + destInfo[i].parameters.address + "<br>";
+      txt = "Date of search: " + (new Date(destInfo[i].dateTime));
+      txt += "<br>Address: " + destInfo[i].parameters.address + "<br>";
       if(destInfo[i].parameters.interest.length > 0){
         inte = new Array(destInfo[i].parameters.interest.length)
         txt += "Interests: ";
