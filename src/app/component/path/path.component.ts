@@ -42,6 +42,7 @@ export class PathComponent implements OnInit{
     if(d == undefined){
       router.navigateByUrl("/pathSearch")
     }    
+    console.log(d);
     // @ts-ignore
     this.data = d.data;
     // @ts-ignore
@@ -358,21 +359,16 @@ export class PathComponent implements OnInit{
   }
 
   parseRoute(routeObj: any){
-    let text = "";
     let dist :number = +(routeObj.distance / 100).toFixed(2);
+    let text = "Distance: " + dist + " km. Time: ";
     let time :number = +(routeObj.time/(1000*60));
     let hour=false;
     if(time > 60){
-      time = +(time/60);
-      hour = true;
+      text += Math.floor(time/60) + ":" + Math.floor(time%60) + " hours";
+    } else{
+      text += Math.floor(time) + " minutes";
     }
-    time = +time.toFixed(2);
-    text = "Distance: " + dist + " km. Time: " + time;
-    if(hour == false){
-      text += " minutes"
-    } else {
-      text += " hour";
-    }
+    
     this.pathInfo = text;
 
     let size = routeObj.points.coordinates.length;
@@ -383,23 +379,30 @@ export class PathComponent implements OnInit{
     let sizeInstructions = routeObj.instructions.length;
     this.pathList = new Array(sizeInstructions) 
     for(let i = 0; i < sizeInstructions; i++){
-        text = routeObj.instructions[i].text + " for ";
-        dist = +routeObj.instructions[i].distance;   
-        if(dist < 1000){
-          text += dist.toFixed(2) + " meters (";
-        } else {
-          dist = dist /1000;
-          text += dist.toFixed(2) + " km (";
-        } 
-        time = routeObj.instructions[i].time/1000;
-
-        if(time < 60){
-          text += time.toFixed(0) + " seconds)";
-        } else if(time < 3600){
-          text += (time/60).toFixed(2) + " minutes)";
-        } else {
-          text += (time/(60*60)).toFixed(2) + " hour)";
+        text = routeObj.instructions[i].text;
+        dist = +routeObj.instructions[i].distance;
+        if(dist > 0){ 
+          text += " for "  
+          if(dist < 1000){
+            text += dist.toFixed(2) + " meters ";
+          } else {
+            dist = dist /1000;
+            text += dist.toFixed(2) + " km ";
+          } 
         }
+        time = routeObj.instructions[i].time/1000;
+        
+        if(Math.floor(time) != 0){
+          if(time < 60){
+            text += "(" + Math.floor(time) + " seconds)";
+          } else if(time < 3600){
+            text += "(" + Math.floor(time/60) + ":" + Math.floor(time % 60) + " minutes)";
+          } else {
+            time = time / 60;
+            text +="(" + Math.floor(time/(60)) + ":" + Math.floor(time % (60)) + " hours)";
+          }
+        }
+
         this.pathList[i] = new PathInfo(i, text); 
     }
   }

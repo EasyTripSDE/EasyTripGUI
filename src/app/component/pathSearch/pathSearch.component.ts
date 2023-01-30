@@ -1,8 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ɵNOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR} from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { AgmMap, MapsAPILoader } from '@agm/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {catchError, lastValueFrom, map, of} from "rxjs";
+import { checkServerIdentity } from 'tls';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'app-pathSearch',
@@ -14,6 +16,7 @@ export class PathSearchComponent{
   loading = false;
   latC = 45.4654219;
   lngC = 9.1859243;
+  errorMessage = "";
   profiles = [
     { name: "car", value: "Car"},
     { name: "foot", value: "Foot"},
@@ -28,8 +31,43 @@ export class PathSearchComponent{
 
   }
 
+  private checkElement(start: string, end: string, weather: boolean, bike: boolean, limit: number, minDistance: number, maxDetour: number, profile: string){
+    if(start == undefined || end == undefined || start == "" || end == ""){
+      this.errorMessage = "Set start and end point";
+      return false;
+    }
+
+    let sizeInt = 0;
+    for(let i = 0; i < this.interests.length; i++){
+      if(this.interests[i].selected == true){
+        sizeInt++;
+      }
+    }
+
+    if(sizeInt == 0){
+      this.errorMessage = "Set at least one interest";
+      return false;
+    }
+
+    if(weather != false && weather != true && bike != true && bike != false){
+      this.errorMessage = "Weather or bike parameters wrong"
+      return false;
+    }
+
+    if(limit == undefined || limit < 0 || limit > 8 || minDistance == undefined || maxDetour == undefined || profile == undefined){
+      this.errorMessage = "Check options parameters";
+      return false;
+    }
+
+    return true;
+  }
+
   async path(event: any, start: string, end: string, weather: boolean, bike: boolean, limit: number, minDistance: number, maxDetour: number, profile: string){
     event.preventDefault();
+    this.errorMessage = "";
+    if(this.checkElement(start, end, weather, bike, limit, minDistance, maxDetour, profile) == false){
+      return;
+    }
     let url = '/v1/trip/travel?start=' + start + '&end=' + end + "&weather=" + weather + "&bikes=" + bike;
     let sizeInt = 0;
     for(let i = 0; i < this.interests.length; i++){

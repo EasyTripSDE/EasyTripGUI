@@ -13,6 +13,7 @@ import {catchError, lastValueFrom, map, of} from "rxjs";
 export class HomeComponent{
   latC = 45.4654219;
   lngC = 9.1859243;
+  errorMessage = "";
   detailed = false;
   loading = false;
   interests = [{name: "Sustenance", value: "sustenance", selected: false}, {name: "Education", value: "education", selected: false},
@@ -23,8 +24,37 @@ export class HomeComponent{
 
   }
 
+  private checkElement(address: string, weather: boolean, bike: boolean){
+    if(address == undefined || address == ""){
+      this.errorMessage = "Set address";
+      return false;
+    }
+
+    let sizeInt = 0;
+    for(let i = 0; i < this.interests.length; i++){
+      if(this.interests[i].selected == true){
+        sizeInt++;
+      }
+    }
+
+    if(sizeInt == 0){
+      this.errorMessage = "Set at least one interest";
+      return false;
+    }
+
+    if(weather != false && weather != true && bike != true && bike != false){
+      this.errorMessage = "Weather or bike parameters wrong"
+      return false;
+    }
+
+    return true;
+  }
+
   async dest(event: any, address: string, weather: boolean, bike: boolean){
     event.preventDefault();
+    if(this.checkElement(address, bike, weather) == false){
+      return;
+    }
 
     let url = 'http://localhost:12349/v1/trip/destination?address=' + address + "&weather=" + weather + "&bikes=" + bike;
     let sizeInt = 0;
