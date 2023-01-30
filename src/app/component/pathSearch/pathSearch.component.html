@@ -5,13 +5,12 @@
         <div *ngIf="loading == true">
           <h1 style="text-align: center"><b>Loading</b></h1>
           <div style="text-align:center">
-            <img style="height: 250px; width: 250px;" src="../../../assets/img/loading.png">
+            <img style="height: 250px; width: 250px;" src="../../../assets/img/loading.gif">
           </div>
         </div>
         <div style="text-align:center">
           <button mat-raised-button color="primary" (click)="path($event, $any(start.value), $any(destination.value), $any(weather.checked), $any(bike.checked), $any(limit.value), $any(minDistance.value), $any(maxDetour.value), $any(profile.value))">Search path info</button>
         </div>
-        <b><div class="example-full-width" style="color: red">{{errorMessage}}</div></b>
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Start: </mat-label>
             <textarea matInput  id="start" #start placeholder="Start" required></textarea>
@@ -74,6 +73,6 @@
           </mat-expansion-panel>
         </mat-accordion>
       </form>
-      
+
     </div>
 </div>
