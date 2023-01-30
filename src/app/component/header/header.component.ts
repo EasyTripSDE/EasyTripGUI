@@ -36,8 +36,8 @@ export class HeaderComponent {
     };
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
     await lastValueFrom(this.http.post<any>('http://localhost:12345/v1/users/login', body, {headers: headers}).pipe(map(data => {
-      this.session.setItem("username", data.username);
-      this.session.setItem("token", data.token);
+      this.session.setItem("username", data.user.username);
+      this.session.setItem("token", data.user.token);
     }),catchError(error => {
       console.log(error);
       // @ts-ignore
