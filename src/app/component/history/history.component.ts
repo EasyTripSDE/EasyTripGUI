@@ -62,6 +62,7 @@ export class HistoryComponent implements OnInit{
   async getHistory(){
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
     await lastValueFrom(this.http.get<any>('http://localhost:12349/v1/history', { headers: headers }).pipe(map(data => {
+      console.log(data);
       this.setPathList(data.history.travel);
       this.setDestList(data.history.destination)
     }),catchError(error => {
