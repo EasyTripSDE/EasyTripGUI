@@ -105,7 +105,8 @@ export class PathSearchComponent{
     await lastValueFrom(this.http.get<any>('http://localhost:12349' + url).pipe(map(data => {
       this.router.navigateByUrl("/path", {state: {"data": data, "param": param}});
     }),catchError(error => {
-      console.log(error)
+      this.errorMessage = "Server error - search not successful";
+      this.loading = false;
       return of([]);
     })));
   }

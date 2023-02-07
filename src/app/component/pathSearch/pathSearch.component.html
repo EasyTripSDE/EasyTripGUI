@@ -8,6 +8,7 @@
             <img style="height: 250px; width: 250px;" src="../../../assets/img/loading.gif">
           </div>
         </div>
+        <h3 style="text-align: center"><b style="color: red">{{errorMessage}}</b></h3>
         <div style="text-align:center">
           <button mat-raised-button color="primary" (click)="path($event, $any(start.value), $any(destination.value), $any(weather.checked), $any(bike.checked), $any(limit.value), $any(minDistance.value), $any(maxDetour.value), $any(profile.value))">Search path info</button>
         </div>

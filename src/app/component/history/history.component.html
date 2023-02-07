@@ -25,6 +25,7 @@
               <img style="height: 150px; width: 150px;" src="../../../assets/img/loading.gif">
             </div>
           </div>
+        <h3 style="text-align: center"><b style="color: red">{{errorDestMessage}}</b></h3>
         <br>
         <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
             <div *cdkVirtualFor="let element of destList let i=index;"  class="example-box">
@@ -32,7 +33,7 @@
                 <div style="text-align:center; width: 30%">
                     <button mat-raised-button color="primary" [disabled]="loadingPath || loadingDest" id="{{element.id}}" (click)="searchDest($event, element.url, i)">Search</button>
                     <span style="padding-left:3px;"></span>
-                    <button mat-raised-button color="primary" [disabled]="loadingPath || loadingDest" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
+                    <button mat-raised-button color="primary" [disabled]="loadingPath || loadingDest" id="{{element.id}}" (click)="deleteElement(element.id, 'dest')">Delete</button>
                 </div>
             </div>
         </cdk-virtual-scroll-viewport>
@@ -46,6 +47,7 @@
               <img style="height: 150px; width: 150px;"  src="../../../assets/img/loading.gif">
             </div>
         </div>
+        <h3 style="text-align: center"><b style="color: red">{{errorPathMessage}}</b></h3>
         <br>
         <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
             <div *cdkVirtualFor="let element of pathList let i=index;"  class="example-box">
@@ -53,7 +55,7 @@
                 <div style="text-align:center; width: 30%;">
                     <button mat-raised-button color="primary" [disabled]="loadingPath || loadingDest" id="{{element.id}}" (click)="searchPath($event, element.url, i)">Search</button>
                     <span style="padding-left:3px;"></span>
-                    <button mat-raised-button color="primary" [disabled]="loadingPath || loadingDest" id="{{element.id}}" (click)="deleteElement(element.id)">Delete</button>
+                    <button mat-raised-button color="primary" [disabled]="loadingPath || loadingDest" id="{{element.id}}" (click)="deleteElement(element.id, 'path')">Delete</button>
                 </div>
             </div>
         </cdk-virtual-scroll-viewport>

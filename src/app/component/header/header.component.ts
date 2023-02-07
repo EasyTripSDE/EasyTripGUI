@@ -30,6 +30,8 @@ export class HeaderComponent {
   }
 
   async login(username: string, psw: string){
+    // @ts-ignore
+    document.getElementById("loginErrorMessage").style.display = 'none';
     const body = {
       "username": username,
       "password": psw
@@ -39,11 +41,14 @@ export class HeaderComponent {
       this.session.setItem("username", data.user.username);
       this.session.setItem("token", data.user.token);
     }),catchError(error => {
-      console.log(error);
+      let errore = error.error.message;
+      if(errore == undefined){
+        errore = "Server error";
+      }
       // @ts-ignore
       document.getElementById("loginErrorMessage").style.display = 'block';
       // @ts-ignore
-      document.getElementById("loginErrorMessage")?.innerHTML = error.error.message;
+      document.getElementById("loginErrorMessage")?.innerHTML = errore;
       return of([]);
     })));
   }
@@ -55,12 +60,5 @@ export class HeaderComponent {
   logout(){
     this.session.removeItem("username");
     this.session.removeItem("token");
-  }
-
-  getErrorMessage(fullError: string){
-    const er = fullError.split("Message");
-    const err = er[1].slice(5, er[1].length);
-    const errorMessage = err.split("<");
-    return errorMessage[0];
   }
 }

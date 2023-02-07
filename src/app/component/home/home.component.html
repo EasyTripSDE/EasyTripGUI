@@ -3,13 +3,13 @@
 
     <form class="example-list">
       <h1 style="text-align: center">Destination search</h1><br>
-      <b><div class="example-full-width" style="color: red">{{errorMessage}}</div></b>
       <div *ngIf="loading == true">
         <h1 style="text-align: center"><b>Loading</b></h1>
         <div style="text-align:center">
           <img style="height: 250px; width: 250px;"  src="../../../assets/img/loading.gif">
         </div>
       </div>
+      <h3 style="text-align: center"><b style="color: red">{{errorMessage}}</b></h3>
       <mat-form-field class="example-full-width" appearance="fill">
         <mat-label>Destination: </mat-label>
         <textarea matInput  id="destination" #destination placeholder="Destination" required></textarea>

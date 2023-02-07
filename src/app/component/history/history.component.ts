@@ -16,6 +16,8 @@ export class HistoryComponent implements OnInit{
   pathList: Array<HistoryInfo> | undefined
   loadingPath = false;
   loadingDest = false;
+  errorDestMessage = "";
+  errorPathMessage = "";
   
   constructor(private router: Router, private http: HttpClient,  private apiloader: MapsAPILoader) {
 
@@ -27,39 +29,56 @@ export class HistoryComponent implements OnInit{
 
   async searchDest(event: any, url:any, arrayIndex: number){
     event.preventDefault();
+    this.errorDestMessage = "";
+    this.errorPathMessage = "";
     this.loadingDest = true;
     await lastValueFrom(this.http.get<any>('http://localhost:12349' + url).pipe(map(data => {
       // @ts-ignore
       this.router.navigateByUrl("/destination", {state: {"data": data.message, "param": this.destList[arrayIndex].params}});
     }),catchError(error => {
       console.log(error)
+      this.errorDestMessage = "Server error - Search not successful";
+      this.loadingDest = false;
       return of([]);
     })));
   }
 
   async searchPath(event:any, url:any, arrayIndex: number){
     event.preventDefault();
+    this.errorDestMessage = "";
+    this.errorPathMessage = "";
     this.loadingPath = true;
     await lastValueFrom(this.http.get<any>('http://localhost:12349' + url).pipe(map(data => {
       // @ts-ignore
       this.router.navigateByUrl("/path", {state: {"data": data, "param": this.destList[arrayIndex].params}});
     }),catchError(error => {
       console.log(error)
+      this.errorPathMessage = "Server error - Search not successful";
+      this.loadingPath = false;
       return of([]);
     })));
   }
 
-  async deleteElement(id:any){
+  async deleteElement(id:any, type: string){
+    this.errorDestMessage = "";
+    this.errorPathMessage = "";
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
     await lastValueFrom(this.http.delete<any>('http://localhost:12349/v1/history/' + id, { headers: headers }).pipe(map(data => {
       this.getHistory();
     }),catchError(error => {
       console.log(error)
+      if(type == "dest"){
+        this.errorDestMessage = "Server error";
+      } else {
+        this.errorPathMessage = "Server error";
+      }
       return of([]);
     })));
   }
 
   async getHistory(){
+    this.errorDestMessage = "";
+    this.errorPathMessage = "";
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
     await lastValueFrom(this.http.get<any>('http://localhost:12349/v1/history', { headers: headers }).pipe(map(data => {
       console.log(data);
@@ -67,6 +86,8 @@ export class HistoryComponent implements OnInit{
       this.setDestList(data.history.destination)
     }),catchError(error => {
       console.log(error)
+      this.errorDestMessage = "Server error";
+      this.errorPathMessage = "Server error";
       return of([]);
     })));
   }

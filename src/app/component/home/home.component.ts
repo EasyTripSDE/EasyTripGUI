@@ -88,6 +88,8 @@ export class HomeComponent{
       this.router.navigateByUrl("/destination", {state: {"data": data.message, "param": param}});
     }),catchError(error => {
       console.log(error)
+      this.errorMessage = "Server error - search not successful";
+      this.loading = false;
       return of([]);
     })));
   }

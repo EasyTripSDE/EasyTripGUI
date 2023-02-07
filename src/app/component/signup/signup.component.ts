@@ -15,6 +15,7 @@ export class SignUpComponent implements OnInit{
   token: any | undefined;
   hide : boolean = true;
   session = sessionStorage;
+  errorMessage = "";
 
   constructor(private router: Router, private http: HttpClient, private activatedRoute: ActivatedRoute) {
 
@@ -28,6 +29,13 @@ export class SignUpComponent implements OnInit{
 
   async signup(username: string, email: string, psw: string, pswConf: string, event:any){
     event.preventDefault();
+    this.errorMessage = "";
+
+    if(username == undefined || username == "" || psw == undefined || psw == "" || pswConf == undefined || pswConf == "" || email == undefined || email == ""){
+      this.errorMessage = "Parameter not defined";
+      return false;
+    }
+
     const body = {
       "username": username,
       "password": psw,
@@ -40,9 +48,14 @@ export class SignUpComponent implements OnInit{
       this.session.setItem("token", data.user.token);
       this.router.navigateByUrl("/");
     }),catchError(error => {
-      console.log(error)
+      if(error.error.message == undefined){
+        this.errorMessage = "Server error";
+      } else {
+        this.errorMessage = error.error.message;
+      }
       return of([]);
     })));
+    return true;
   }
 
 }
