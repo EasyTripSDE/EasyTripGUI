@@ -27,7 +27,7 @@
           </div>
         <h3 style="text-align: center"><b style="color: red">{{errorDestMessage}}</b></h3>
         <br>
-        <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
+        <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:600px">
             <div *cdkVirtualFor="let element of destList let i=index;"  class="example-box">
                 <div style="width: 70%; padding-left:15px; text-align:left" innerHtml="{{element.desc}}"> </div>
                 <div style="text-align:center; width: 30%">
@@ -49,7 +49,7 @@
         </div>
         <h3 style="text-align: center"><b style="color: red">{{errorPathMessage}}</b></h3>
         <br>
-        <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:350px">
+        <cdk-virtual-scroll-viewport itemSize="20" class="example-viewport" style="height:600px">
             <div *cdkVirtualFor="let element of pathList let i=index;"  class="example-box">
                 <div style="width: 70%; padding-left:15px; text-align:left" innerHtml="{{element.desc}}"> </div>
                 <div style="text-align:center; width: 30%;">
