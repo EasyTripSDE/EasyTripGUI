@@ -33,8 +33,7 @@
   </div>
   <div class="map">
     <agm-map [zoom]="11" [latitude]="latC" [longitude]="lngC" id="mappa">
-      <agm-marker id="{{element.id}}" [latitude]="element.lat" [longitude]="element.lng" *ngFor="let element of pointOnMap"
-      (markerClick)="showMarkerInfo($event)"></agm-marker>
+      <agm-marker id="{{element.id}}" [latitude]="element.lat" [longitude]="element.lng" *ngFor="let element of pointOnMap"></agm-marker>
     </agm-map>
     <div id="poiSelected"></div>
   </div>
@@ -46,6 +45,10 @@
       </select>
     </mat-form-field>
     <span style="padding-left:2%"></span>
+    <span *ngIf="detailedInfo != '' && listSelected == 'poi'">
+      <button mat-raised-button color="primary" (click)="setPoiPoint()">Show all POI</button>
+    </span>
+    <span style="padding-left:2%"></span>
     <span appearance="fill" *ngIf="session.getItem('token') != undefined">
       <button mat-raised-button color="primary" (click)="save()">Save research</button>
     </span> 
@@ -55,6 +58,5 @@
       <div *cdkVirtualFor="let element of lists" (click)="seeDetail($event)" id="{{element.id}}" class="example-box">{{element.desc}}</div>
     </cdk-virtual-scroll-viewport>
   </div> 
-  <div class="detail" id="detailedInfo"> 
-  </div>
+  <div class="detail" id="detailedInfo"> </div>
 </div>

@@ -35,7 +35,8 @@ export class PathComponent implements OnInit{
     pathList : Array<PathInfo> | undefined;
     data: any;
     param: any;
-    session = sessionStorage;        
+    session = sessionStorage; 
+    detailedInfo = "";        
 
   constructor(private http: HttpClient,  private apiloader: MapsAPILoader, private router: Router) {
     let d = this.router.getCurrentNavigation()?.extras.state;
@@ -65,7 +66,7 @@ export class PathComponent implements OnInit{
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('x-access-token', sessionStorage.getItem('token') ?? "");
     await lastValueFrom(this.http.post<any>('http://localhost:12349/v1/history', body, { headers: headers }).pipe(map(data => {
       // @ts-ignore
-      document.getElementById("generalInfo").innerHTML = "Information saved correctly";
+      document.getElementById("generalInfo").innerHTML = "<b>Information saved correctly</b><hr><br>";
     }),catchError(error => {
       return of([]);
     })));
@@ -79,8 +80,9 @@ export class PathComponent implements OnInit{
   }
 
   updateCity(event: any){
+    this.detailedInfo = "";
     // @ts-ignore
-    document.getElementById("detailedInfo").innerHTML = "";
+    document.getElementById("detailedInfo").innerHTML = this.detailedInfo;
     // @ts-ignore
     document.getElementById("generalInfo").innerHTML = "";
     this.lists = undefined;
@@ -128,8 +130,11 @@ export class PathComponent implements OnInit{
   }
 
   updateList(event: any){
+    this.latC = this.city[this.cityToShow].lat;
+    this.lngC = this.city[this.cityToShow].lng;
+    this.detailedInfo = "";
     // @ts-ignore
-    document.getElementById("detailedInfo").innerHTML = "";
+    document.getElementById("detailedInfo").innerHTML = this.detailedInfo;
     // @ts-ignore
     document.getElementById("generalInfo").innerHTML = "";
     this.lists = undefined;
@@ -157,18 +162,15 @@ export class PathComponent implements OnInit{
     this.setDetailInfo(event.target.id);
   }
 
-  showMarkerInfo(event: any){
-    this.setDetailInfo(event._id);
-  }
-
   setDetailInfo(id: number){
     let text = "";
     if(this.listSelected == "poi"){
         text = (this.getPOI(id))?.info;
     } 
 
+    this.detailedInfo = text;
     // @ts-ignore
-    document.getElementById("detailedInfo").innerHTML = text;
+    document.getElementById("detailedInfo").innerHTML = this.detailedInfo;
   }
 
   setBikePoint(){
@@ -181,6 +183,11 @@ export class PathComponent implements OnInit{
   }
 
   setPoiPoint(){
+    this.latC = this.city[this.cityToShow].lat;
+    this.lngC = this.city[this.cityToShow].lng;
+    this.detailedInfo = "";
+    // @ts-ignore
+    document.getElementById("detailedInfo").innerHTML = this.detailedInfo;
     // @ts-ignore
     let poiList = (this.city[this.cityToShow]).getPoiList();
     let size = poiList?.length;
@@ -199,6 +206,13 @@ export class PathComponent implements OnInit{
     for(let i = 0; i < poiList.length; i++){
         // @ts-ignore
         if(id == poiList[i].id){
+            // @ts-ignore
+            this.latC = poiList[i].lat;
+            // @ts-ignore
+            this.lngC = poiList[i].lng;
+            this.pointOnMap = new Array(1);
+            // @ts-ignore
+            this.pointOnMap[0] = new Point(poiList[i].id, poiList[i].lat, poiList[i].lng);
             // @ts-ignore
             return poiList[i];
         }
@@ -314,10 +328,18 @@ export class PathComponent implements OnInit{
 
   parsePoi(poi: any){
     let size = poi.length;
-    let poiList = new Array(size);
+    let actualSize = 0;
+    for(let k = 0; k < size; k++){
+      if(poi[k].tags.name != undefined){
+        actualSize++;
+      }
+    }
+    let poiList = new Array(actualSize);
     let info = "";
     let desc = "";
+    let y = 0;
     for(let i = 0; i < size; i++){
+      if(poi[i].tags.name != undefined){
         info = poi[i].tags.name;
         desc = "<b>" + poi[i].tags.name + "</b>";
         if(poi[i].tags.amenity != undefined){
@@ -351,9 +373,10 @@ export class PathComponent implements OnInit{
         if(poi[i].lat != undefined){
           desc += "<br>Coordinates: " + (poi[i].lat).toFixed(2) + "; " + (poi[i].lon).toFixed(2);
         }
-        poiList[i] = new POI(i, info, desc, poi[i].lat, poi[i].lon);
+        poiList[y] = new POI(y, info, desc, poi[i].lat, poi[i].lon);
+        y++;
+      }
     }
-
     return poiList;
   }
 
