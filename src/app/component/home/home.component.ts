@@ -52,6 +52,7 @@ export class HomeComponent{
 
   async dest(event: any, address: string, weather: boolean, bike: boolean){
     event.preventDefault();
+    this.errorMessage = "";
     if(this.checkElement(address, bike, weather) == false){
       return;
     }
