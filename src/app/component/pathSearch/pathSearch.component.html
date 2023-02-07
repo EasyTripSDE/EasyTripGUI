@@ -10,7 +10,7 @@
         </div>
         <h3 style="text-align: center"><b style="color: red">{{errorMessage}}</b></h3>
         <div style="text-align:center">
-          <button mat-raised-button color="primary" (click)="path($event, $any(start.value), $any(destination.value), $any(weather.checked), $any(bike.checked), $any(limit.value), $any(minDistance.value), $any(maxDetour.value), $any(profile.value))">Search path info</button>
+          <button mat-raised-button color="primary" [disabled]="loading" (click)="path($event, $any(start.value), $any(destination.value), $any(weather.checked), $any(bike.checked), $any(limit.value), $any(minDistance.value), $any(maxDetour.value), $any(profile.value))">Search path info</button>
         </div>
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Start: </mat-label>

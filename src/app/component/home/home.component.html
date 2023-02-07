@@ -34,7 +34,7 @@
         </mat-checkbox>
       </div><br><br>
       <div style="text-align: center">
-        <button mat-raised-button color="primary" (click)="dest($event, $any(destination.value), $any(weather.checked), $any(bike.checked))">Search destination info</button>
+        <button mat-raised-button [disabled]="loading" color="primary" (click)="dest($event, $any(destination.value), $any(weather.checked), $any(bike.checked))">Search destination info</button>
       </div>
     </form><br>
   </div>
