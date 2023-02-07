@@ -41,8 +41,7 @@ export class PathComponent implements OnInit{
     let d = this.router.getCurrentNavigation()?.extras.state;
     if(d == undefined){
       router.navigateByUrl("/pathSearch")
-    }    
-    console.log(d);
+    }
     // @ts-ignore
     this.data = d.data;
     // @ts-ignore
@@ -68,7 +67,6 @@ export class PathComponent implements OnInit{
       // @ts-ignore
       document.getElementById("generalInfo").innerHTML = "Information saved correctly";
     }),catchError(error => {
-      console.log(error)
       return of([]);
     })));
   }
