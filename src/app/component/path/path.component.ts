@@ -381,7 +381,7 @@ export class PathComponent implements OnInit{
   }
 
   parseRoute(routeObj: any){
-    let dist :number = +(routeObj.distance / 100).toFixed(2);
+    let dist :number = +(routeObj.distance / 1000).toFixed(2);
     let text = "Distance: " + dist + " km. Time: ";
     let time :number = +(routeObj.time/(1000*60));
     let hour=false;
